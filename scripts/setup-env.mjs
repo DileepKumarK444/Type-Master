@@ -1,5 +1,5 @@
 // Usage: npm run setup:env
-// Creates apps/web/.env.local if needed and fills any EMPTY required values (never overwrites values you set).
+// Creates apps/web/.env.local if needed and fills any EMPTY (or placeholder) required values (never overwrites real values you set).
 import { randomBytes } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { userInfo } from "node:os";
@@ -19,7 +19,9 @@ const filled = [];
 for (const [key, value] of Object.entries(defaults)) {
   const re = new RegExp(`^${key}=.*$`, "m");
   const m = text.match(re);
-  if (m && m[0].slice(key.length + 1).trim() !== "") continue; // already set: keep it
+  const current = m ? m[0].slice(key.length + 1).trim() : "";
+  const isPlaceholder = key === "DATABASE_URL" && /\/\/user(:[^@]*)?@/.test(current); // the example file's "user" is not a real role
+  if (current !== "" && !isPlaceholder) continue; // already set to a real value: keep it
   text = m ? text.replace(re, `${key}=${value}`) : `${text.replace(/\n?$/, "\n")}${key}=${value}\n`;
   filled.push(key);
 }
