@@ -16,7 +16,7 @@ function safePath(p?: string): string {
     return "/app";
   }
 }
-const input = "w-full rounded-token border border-line bg-surface px-3.5 py-2.5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/30";
+const input = "w-full rounded-token border border-line bg-surface px-3.5 py-2.5 outline-none focus:border-accent focus:ring-2 focus:ring-accent/30 aria-[invalid=true]:border-bad";
 
 export function AuthForm({ mode, googleEnabled, callbackUrl, notice }: { mode: "login" | "register"; googleEnabled: boolean; callbackUrl?: string; notice?: string }) {
   const router = useRouter();
@@ -41,7 +41,11 @@ export function AuthForm({ mode, googleEnabled, callbackUrl, notice }: { mode: "
         if (res.status === 429) { setError("Too many attempts. Please try again later."); return; }
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
-          setFields(body.fields ?? {}); setError("Please fix the highlighted fields."); return;
+          const f: Record<string, string[]> = body.fields ?? {};
+          setFields(f);
+          const first = (["name", "email", "password"] as const).find((k) => f[k]?.[0]);
+          setError(first ? `${first[0].toUpperCase()}${first.slice(1)}: ${f[first]![0]}.` : "Please check your details and try again.");
+          return;
         }
       }
       const r = await signIn("credentials", { email, password, redirect: false });
@@ -68,17 +72,17 @@ export function AuthForm({ mode, googleEnabled, callbackUrl, notice }: { mode: "
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         {reg && (
           <label className="block text-sm font-semibold">Name
-            <input name="name" autoComplete="name" required className={`${input} mt-1.5 font-normal`} />
+            <input name="name" autoComplete="name" required aria-invalid={!!fields.name} className={`${input} mt-1.5 font-normal`} />
             {fields.name && <span className="text-xs font-normal text-bad">{fields.name[0]}</span>}
           </label>
         )}
         <label className="block text-sm font-semibold">Email
-          <input name="email" type="email" autoComplete="email" required className={`${input} mt-1.5 font-normal`} />
+          <input name="email" type="email" autoComplete="email" required aria-invalid={!!fields.email} className={`${input} mt-1.5 font-normal`} />
           {fields.email && <span className="text-xs font-normal text-bad">{fields.email[0]}</span>}
         </label>
         <label className="block text-sm font-semibold">Password
-          <input name="password" type="password" autoComplete={reg ? "new-password" : "current-password"} required minLength={reg ? 8 : 1} className={`${input} mt-1.5 font-normal`} />
-          {reg && <span className="text-xs font-normal text-muted">At least 8 characters.</span>}
+          <input name="password" type="password" autoComplete={reg ? "new-password" : "current-password"} required minLength={reg ? 8 : 1} aria-invalid={!!fields.password} className={`${input} mt-1.5 font-normal`} />
+          {reg && <span className="text-xs font-normal text-muted">8–72 characters. Very common passwords (like 12345678) aren’t allowed.</span>}
           {!reg && <Link href="/forgot-password" className="mt-1.5 block text-right text-xs font-semibold text-accent underline">Forgot password?</Link>}
           {fields.password && <span className="block text-xs font-normal text-bad">{fields.password[0]}</span>}
         </label>

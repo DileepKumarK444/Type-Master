@@ -40,7 +40,7 @@ export function ResetForm({ token }: { token: string }) {
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         <label className="block text-sm font-semibold">New password
           <input name="password" type="password" autoComplete="new-password" required minLength={8} className={`${input} mt-1.5 font-normal`} />
-          <span className="text-xs font-normal text-muted">At least 8 characters.</span>
+          <span className="text-xs font-normal text-muted">8–72 characters. Very common passwords (like 12345678) aren’t allowed.</span>
         </label>
         <label className="block text-sm font-semibold">Confirm new password
           <input name="confirm" type="password" autoComplete="new-password" required minLength={8} className={`${input} mt-1.5 font-normal`} />
