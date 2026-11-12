@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>36/36</span>
+                <span class='fraction'>44/44</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>36/36</span>
+                <span class='fraction'>44/44</span>
             </div>
         
             
@@ -124,7 +124,16 @@
 <a name='L59'></a><a href='#L59'>59</a>
 <a name='L60'></a><a href='#L60'>60</a>
 <a name='L61'></a><a href='#L61'>61</a>
-<a name='L62'></a><a href='#L62'>62</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -154,11 +163,15 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">36x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">24x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">16x</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -182,11 +195,16 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export type Level = "beginner" | "intermediate";
-export type Kind = "letters" | "capitals" | "punct" | "digits" | "words" | "sentences";
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export type Level = "beginner" | "intermediate" | "advanced";
+export type Kind = "letters" | "capitals" | "punct" | "digits" | "words" | "sentences" | "code";
 &nbsp;
 export interface LessonDef {
   id: number;
@@ -214,12 +232,16 @@ export const UNITS: UnitDef[] = [
   { id: 4, title: "Capitals &amp; punctuation", level: "intermediate" },
   { id: 5, title: "Numbers", level: "intermediate" },
   { id: 6, title: "Words &amp; sentences", level: "intermediate" },
+  { id: 7, title: "Coding", level: "advanced" },
 ];
 &nbsp;
 const B = (id: number, unit: number, title: string, blurb: string, newKeys: string[], tip: string, targetWpm: number, kind: Kind = "letters"): LessonDef =&gt;
   ({ id, unit, level: "beginner", title, blurb, newKeys, tip, kind, passAccuracy: 90, targetWpm });
 const I = (id: number, unit: number, title: string, blurb: string, newKeys: string[], tip: string, kind: Kind, targetWpm: number): LessonDef =&gt;
   ({ id, unit, level: "intermediate", title, blurb, newKeys, tip, kind, passAccuracy: 93, targetWpm });
+&nbsp;
+const A = (id: number, title: string, blurb: string, newKeys: string[], tip: string, targetWpm: number): LessonDef =&gt;
+  ({ id, unit: 7, level: "advanced", title, blurb, newKeys, tip, kind: "code", passAccuracy: 95, targetWpm });
 &nbsp;
 export const LESSONS: LessonDef[] = [
   B(1, 1, "Index fingers: F and J", "Find home position", ["f", "j"], "Rest your index fingers on F and J — feel the small bumps. Keep thumbs on the space bar.", 10),
@@ -242,6 +264,11 @@ export const LESSONS: LessonDef[] = [
   I(18, 6, "Short sentences", "Capitals and full stops", [], "Think one word ahead. Pause only at the end of a sentence.", "sentences", 25),
   I(19, 6, "Longer sentences", "Commas and question marks", [], "Keep a steady pace. A slower, accurate pace beats a fast, messy one.", "sentences", 28),
   I(20, 6, "Paragraph rhythm", "Build endurance", [], "A full paragraph: keep your rhythm even from first word to last.", "sentences", 30),
+  A(21, "Brackets &amp; quotes", "( ) [ ] { } and quotes", ["(", ")", "[", "]", "{", "}", '"', "'"], "Brackets [ ] need no Shift; ( ) { } \" use Shift on the opposite hand. Type the opening and closing together: (), [], {}.", 20),
+  A(22, "Operators", "= + - * / &lt; &gt; ! &amp; | ? :", ["=", "+", "-", "*", "/", "&lt;", "&gt;", "!", "&amp;", "|", "?", ":"], "Most operators are Shift symbols. Keep an even rhythm through longer ones like === and &amp;&amp;.", 20),
+  A(23, "JavaScript snippets", "Real code, Enter and indentation", [], "Press Enter at the end of each line and indent with two spaces (the Tab key isn’t used here). Read one chunk ahead.", 25),
+  A(24, "Python snippets", "Colons, f-strings, 4-space blocks", [], "Python blocks indent by four spaces. Don’t forget the colon at the end of def, if, for and class lines.", 25),
+  A(25, "SQL snippets", "Uppercase keywords and joins", [], "SQL keywords are typed in capitals, so lean on Shift with the opposite pinky, or tap Caps Lock for a whole word.", 25),
 ];
 &nbsp;
 export const getLesson = (id: number): LessonDef | undefined =&gt; LESSONS.find((l) =&gt; l.id === id);
@@ -253,7 +280,7 @@ export const LESSON_COUNT = LESSONS.length;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-11-12T16:56:32.263Z
+                at 2026-11-12T19:51:41.466Z
             </div>
         <script src="prettify.js"></script>
         <script>

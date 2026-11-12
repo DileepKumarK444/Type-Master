@@ -53,9 +53,9 @@ describe("levels", () => {
 });
 
 describe("badges", () => {
-  it("has 12 unique badges", () => {
-    expect(BADGES).toHaveLength(12);
-    expect(new Set(BADGES.map((b) => b.id)).size).toBe(12);
+  it("has 13 unique badges", () => {
+    expect(BADGES).toHaveLength(13);
+    expect(new Set(BADGES.map((b) => b.id)).size).toBe(13);
     expect(getBadge("rocket_80")?.title).toBe("Rocket");
     expect(getBadge("nope")).toBeUndefined();
   });
@@ -68,5 +68,10 @@ describe("badges", () => {
   it("lesson badges count the right lessons", () => {
     expect(earnedBadgeIds({ ...emptyStats(), lessonsPassed: [2, 3, 4, 5, 6] })).not.toContain("finisher"); // lesson 1 missing
     expect(earnedBadgeIds({ ...emptyStats(), lessonsPassed: Array.from({ length: 20 }, (_, i) => i + 1) })).toEqual(expect.arrayContaining(["scholar", "graduate"]));
+    // coding lessons do not count toward Graduate, and have their own badge
+    const coding = [21, 22, 23, 24, 25];
+    expect(earnedBadgeIds({ ...emptyStats(), lessonsPassed: coding })).toEqual(["coder"]); // 5 lessons: Coder, but not yet Scholar (10)
+    expect(earnedBadgeIds({ ...emptyStats(), lessonsPassed: coding })).not.toContain("graduate");
+    expect(earnedBadgeIds({ ...emptyStats(), lessonsPassed: [21, 22, 23, 24] })).not.toContain("coder");
   });
 });

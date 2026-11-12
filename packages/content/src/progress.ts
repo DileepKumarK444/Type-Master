@@ -13,12 +13,23 @@ export function computeStars(def: Pick<LessonDef, "passAccuracy" | "targetWpm">,
   return 1;
 }
 
-/** Lesson N unlocks once lesson N-1 has been passed (>= 1 star). Lesson 1 is always open. */
-export function isUnlocked(id: number, starsByLesson: ReadonlyMap<number, number>): boolean {
-  return id === 1 || (starsByLesson.get(id - 1) ?? 0) >= 1;
+/** The coding track (lessons 21–25) opens after the full-alphabet lesson, so a programmer need not finish all 20 first. */
+export const CODING_FIRST_LESSON = 21;
+export const CODING_PREREQUISITE = 12;
+
+/** The lesson that must be passed before `id` opens; null for lesson 1. */
+export function prerequisiteOf(id: number): number | null {
+  if (id <= 1) return null;
+  return id === CODING_FIRST_LESSON ? CODING_PREREQUISITE : id - 1;
 }
 
-const show = (k: string) => (k === " " ? "space" : k.length === 1 ? k.toUpperCase() : k);
+/** A lesson unlocks once its prerequisite has been passed (>= 1 star). Lesson 1 is always open. */
+export function isUnlocked(id: number, starsByLesson: ReadonlyMap<number, number>): boolean {
+  const need = prerequisiteOf(id);
+  return need === null || (starsByLesson.get(need) ?? 0) >= 1;
+}
+
+const show = (k: string) => (k === " " ? "space" : k === "\n" ? "Enter" : k.length === 1 ? k.toUpperCase() : k);
 
 /** One specific, actionable sentence for a failed attempt. */
 export function failureTip(r: {

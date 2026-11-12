@@ -1,4 +1,5 @@
 import { COMMON_WORDS, generateText, rng } from "@typemaster/typing-engine";
+import { BRACKET_TOKENS, OPERATOR_TOKENS, SNIPPETS, type CodeLang } from "./code";
 import { LESSONS, type LessonDef } from "./lessons";
 
 export type StepKind = "meet" | "drill" | "words" | "test";
@@ -45,7 +46,7 @@ function groups(rand: () => number, focus: string[], all: string[], count: numbe
 }
 
 /** Real words made only of `allowed` letters, preferring ones containing a new letter. Falls back to key groups. */
-function realWords(rand: () => number, allowed: string[], newKeys: string[], count: number): string[] {
+export function restrictedWords(rand: () => number, allowed: string[], newKeys: string[], count: number): string[] {
   const set = new Set(letters(allowed));
   const fits = POOL.filter((w) => [...w].every((c) => set.has(c)));
   const fresh = letters(newKeys);
@@ -95,9 +96,9 @@ function lettersSteps(def: LessonDef, rand: () => number): string[] {
   const allLetters = allowed.length ? allowed : [];
   const meet = groups(rand, focus, focus, 8, 2, 3, 1).join(" ");
   const drill = groups(rand, focus, allLetters, 12, 2, 4, 0.6).join(" ");
-  const words = withPunctuation(realWords(rand, allowed, fresh, 10), fresh).join(" ");
+  const words = withPunctuation(restrictedWords(rand, allowed, fresh, 10), fresh).join(" ");
   const testCount = def.id <= 4 ? 14 : 20;
-  const test = withPunctuation(realWords(rand, allowed, fresh.length && def.id < 12 ? fresh : [], testCount), fresh).join(" ");
+  const test = withPunctuation(restrictedWords(rand, allowed, fresh.length && def.id < 12 ? fresh : [], testCount), fresh).join(" ");
   return [meet, drill, words, test];
 }
 
@@ -125,6 +126,26 @@ function sentencesSteps(def: LessonDef): string[] {
   return [s[0], `${s[1]} ${s[2]}`, s.slice(2, 5).join(" "), s.slice(3, def.id === 20 ? 6 : 7).join(" ")];
 }
 
+const CODE_TRACK: Record<number, "brackets" | "operators" | CodeLang> = { 21: "brackets", 22: "operators", 23: "js", 24: "python", 25: "sql" };
+
+/** Coding lessons: symbol drills (21–22) then real snippets (23–25). Snippets are picked without repeats; tests include Enter. */
+function codeSteps(def: LessonDef, rand: () => number): string[] {
+  const track = CODE_TRACK[def.id];
+  if (track === "brackets" || track === "operators") {
+    const tokens = track === "brackets" ? BRACKET_TOKENS : OPERATOR_TOKENS;
+    const pickTokens = (n: number) => shuffle(tokens, rand).slice(0, n).join(" ");
+    const meet = track === "brackets" ? `() [] {} "" '' () [] {}` : "+ - * / = < > ! & | ? :";
+    return [meet, pickTokens(10), pickTokens(14), pickTokens(20)];
+  }
+  const bank = SNIPPETS[track];
+  const used = new Set<string>();
+  const take = (list: string[]) => { const s = shuffle(list, rand).find((x) => !used.has(x)) ?? list[0]; used.add(s); return s; };
+  const single = bank.filter((x) => !x.includes("\n"));
+  const multi = bank.filter((x) => x.includes("\n"));
+  const shortest = [...single].sort((a, b) => a.length - b.length).slice(0, 3);
+  return [take(shortest), `${take(single)}\n${take(single)}`, `${take(multi)}\n${take(single)}`, `${take(single)}\n${take(multi)}\n${take(multi)}`];
+}
+
 const STEP_META: Omit<LessonStep, "text">[] = [
   { kind: "meet", title: "Meet the keys", hint: "Take your time. Learn where each finger goes." },
   { kind: "drill", title: "Drill", hint: "Repeat the patterns. Accuracy first, speed will follow." },
@@ -137,6 +158,7 @@ export function buildLesson(def: LessonDef): LessonStep[] {
   const rand = rng(def.id * 7919 + 13);
   let texts: string[];
   switch (def.kind) {
+    case "code": texts = codeSteps(def, rand); break;
     case "digits": texts = digitsSteps(def, rand); break;
     case "capitals": texts = capitalsSteps(rand); break;
     case "punct": texts = punctSteps(rand); break;

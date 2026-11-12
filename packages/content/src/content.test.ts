@@ -1,21 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { LESSONS, LESSON_COUNT, UNITS, getLesson } from "./lessons";
 import { allowedKeys, buildLesson } from "./build";
-import { computeStars, failureTip, isUnlocked } from "./progress";
+import { computeStars, failureTip, isUnlocked, prerequisiteOf } from "./progress";
 import { fingerName } from "./fingers";
 
 describe("curriculum structure", () => {
-  it("has 12 beginner + 8 intermediate lessons with sequential ids", () => {
-    expect(LESSON_COUNT).toBe(20);
-    expect(LESSONS.map((l) => l.id)).toEqual(Array.from({ length: 20 }, (_, i) => i + 1));
+  it("has 12 beginner + 8 intermediate + 5 coding lessons with sequential ids", () => {
+    expect(LESSON_COUNT).toBe(25);
+    expect(LESSONS.map((l) => l.id)).toEqual(Array.from({ length: 25 }, (_, i) => i + 1));
     expect(LESSONS.filter((l) => l.level === "beginner")).toHaveLength(12);
     expect(LESSONS.filter((l) => l.level === "intermediate")).toHaveLength(8);
+    expect(LESSONS.filter((l) => l.level === "advanced").map((l) => l.id)).toEqual([21, 22, 23, 24, 25]);
   });
-  it("references only defined units, and pass gates match the spec (90 / 93)", () => {
+  it("references only defined units, and pass gates match the spec (90 / 93 / 95)", () => {
     const units = new Set(UNITS.map((u) => u.id));
     for (const l of LESSONS) {
       expect(units.has(l.unit)).toBe(true);
-      expect(l.passAccuracy).toBe(l.level === "beginner" ? 90 : 93);
+      expect(l.passAccuracy).toBe(l.level === "beginner" ? 90 : l.level === "intermediate" ? 93 : 95);
       expect(l.tip.length).toBeGreaterThan(20);
     }
     expect(getLesson(5)?.title).toMatch(/G and H/);
@@ -34,8 +35,9 @@ describe("buildLesson", () => {
       expect(steps.map((s) => s.kind), `lesson ${l.id}`).toEqual(["meet", "drill", "words", "test"]);
       for (const s of steps) {
         expect(s.text.length, `lesson ${l.id} ${s.kind}`).toBeGreaterThan(5);
-        expect(s.text).not.toMatch(/\s{2,}|^\s|\s$/);
-        expect(s.text).not.toMatch(/undefined|NaN/);
+        if (l.kind === "code") expect(s.text, `lesson ${l.id} ${s.kind}`).not.toMatch(/\t|[ ]\n|^\s|\s$/); // code may have newlines and indentation, never tabs/trailing spaces
+        else expect(s.text).not.toMatch(/\s{2,}|^\s|\s$/);
+        if (l.kind !== "code") expect(s.text).not.toMatch(/undefined|NaN/); // real code may contain "undefined"
       }
     }
   });
@@ -77,6 +79,22 @@ describe("buildLesson", () => {
   });
 });
 
+describe("coding lessons", () => {
+  it("bracket and operator lessons drill their symbols; snippet lessons end with multi-line code (Enter practice)", () => {
+    expect(buildLesson(getLesson(21)!)[0].text).toMatch(/\(\).*\[\].*\{\}/);
+    expect(buildLesson(getLesson(22)!)[0].text).toBe("+ - * / = < > ! & | ? :");
+    for (const id of [21, 22]) expect(buildLesson(getLesson(id)!)[3].text.split(" ").length).toBeGreaterThanOrEqual(15);
+    for (const id of [23, 24, 25]) {
+      const steps = buildLesson(getLesson(id)!);
+      expect(steps[0].text, `lesson ${id} meet is one short line`).not.toContain("\n");
+      expect(steps[3].text.split("\n").length, `lesson ${id} test`).toBeGreaterThanOrEqual(5);
+      expect(new Set(steps.flatMap((s) => s.text.split("\n\n"))).size).toBeGreaterThan(1);
+    }
+    expect(buildLesson(getLesson(25)!)[3].text).toMatch(/SELECT|INSERT|UPDATE|CREATE|DELETE/);
+    expect(buildLesson(getLesson(24)!)[3].text).toMatch(/def |class |import |for |with |try:|\[/);
+  });
+});
+
 describe("computeStars", () => {
   const def = { passAccuracy: 90, targetWpm: 15 };
   it("awards stars by accuracy and speed", () => {
@@ -85,6 +103,19 @@ describe("computeStars", () => {
     expect(computeStars(def, { accuracy: 96, wpm: 5 })).toBe(2);
     expect(computeStars(def, { accuracy: 98, wpm: 14 })).toBe(2);
     expect(computeStars(def, { accuracy: 98, wpm: 15 })).toBe(3);
+  });
+});
+
+describe("coding track unlocking", () => {
+  it("lesson 21 opens after lesson 12 (not 20); 22+ follow in order", () => {
+    expect(prerequisiteOf(1)).toBeNull();
+    expect(prerequisiteOf(13)).toBe(12);
+    expect(prerequisiteOf(21)).toBe(12);
+    expect(prerequisiteOf(22)).toBe(21);
+    const upTo12 = new Map(Array.from({ length: 12 }, (_, i) => [i + 1, 1] as [number, number]));
+    expect(isUnlocked(21, upTo12)).toBe(true);
+    expect(isUnlocked(22, upTo12)).toBe(false);
+    expect(isUnlocked(21, new Map(Array.from({ length: 11 }, (_, i) => [i + 1, 1] as [number, number])))).toBe(false);
   });
 });
 
@@ -107,6 +138,9 @@ describe("failureTip", () => {
   it("falls back to the worst key, then to a general tip", () => {
     expect(failureTip({ keyStats: { p: { hits: 1, misses: 3 }, q: { hits: 1, misses: 2 } }, confusions: { p: { o: 1 } }, accuracy: 80, passAccuracy: 90 })).toMatch(/^P gave you the most trouble \(3 misses\)/);
     expect(failureTip({ keyStats: { p: { hits: 5, misses: 1 } }, accuracy: 85.4, passAccuracy: 90 })).toMatch(/85% and you need 90%/);
+  });
+  it("names the Enter key readably", () => {
+    expect(failureTip({ keyStats: {}, confusions: { "\n": { " ": 3 } }, accuracy: 70, passAccuracy: 95 })).toMatch(/space instead of Enter/);
   });
   it("describes the space key readably", () => {
     expect(failureTip({ keyStats: {}, confusions: { " ": { x: 3 } }, accuracy: 70, passAccuracy: 90 })).toMatch(/X instead of space/);

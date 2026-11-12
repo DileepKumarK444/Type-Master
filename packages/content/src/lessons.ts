@@ -1,5 +1,5 @@
-export type Level = "beginner" | "intermediate";
-export type Kind = "letters" | "capitals" | "punct" | "digits" | "words" | "sentences";
+export type Level = "beginner" | "intermediate" | "advanced";
+export type Kind = "letters" | "capitals" | "punct" | "digits" | "words" | "sentences" | "code";
 
 export interface LessonDef {
   id: number;
@@ -27,12 +27,16 @@ export const UNITS: UnitDef[] = [
   { id: 4, title: "Capitals & punctuation", level: "intermediate" },
   { id: 5, title: "Numbers", level: "intermediate" },
   { id: 6, title: "Words & sentences", level: "intermediate" },
+  { id: 7, title: "Coding", level: "advanced" },
 ];
 
 const B = (id: number, unit: number, title: string, blurb: string, newKeys: string[], tip: string, targetWpm: number, kind: Kind = "letters"): LessonDef =>
   ({ id, unit, level: "beginner", title, blurb, newKeys, tip, kind, passAccuracy: 90, targetWpm });
 const I = (id: number, unit: number, title: string, blurb: string, newKeys: string[], tip: string, kind: Kind, targetWpm: number): LessonDef =>
   ({ id, unit, level: "intermediate", title, blurb, newKeys, tip, kind, passAccuracy: 93, targetWpm });
+
+const A = (id: number, title: string, blurb: string, newKeys: string[], tip: string, targetWpm: number): LessonDef =>
+  ({ id, unit: 7, level: "advanced", title, blurb, newKeys, tip, kind: "code", passAccuracy: 95, targetWpm });
 
 export const LESSONS: LessonDef[] = [
   B(1, 1, "Index fingers: F and J", "Find home position", ["f", "j"], "Rest your index fingers on F and J — feel the small bumps. Keep thumbs on the space bar.", 10),
@@ -55,6 +59,11 @@ export const LESSONS: LessonDef[] = [
   I(18, 6, "Short sentences", "Capitals and full stops", [], "Think one word ahead. Pause only at the end of a sentence.", "sentences", 25),
   I(19, 6, "Longer sentences", "Commas and question marks", [], "Keep a steady pace. A slower, accurate pace beats a fast, messy one.", "sentences", 28),
   I(20, 6, "Paragraph rhythm", "Build endurance", [], "A full paragraph: keep your rhythm even from first word to last.", "sentences", 30),
+  A(21, "Brackets & quotes", "( ) [ ] { } and quotes", ["(", ")", "[", "]", "{", "}", '"', "'"], "Brackets [ ] need no Shift; ( ) { } \" use Shift on the opposite hand. Type the opening and closing together: (), [], {}.", 20),
+  A(22, "Operators", "= + - * / < > ! & | ? :", ["=", "+", "-", "*", "/", "<", ">", "!", "&", "|", "?", ":"], "Most operators are Shift symbols. Keep an even rhythm through longer ones like === and &&.", 20),
+  A(23, "JavaScript snippets", "Real code, Enter and indentation", [], "Press Enter at the end of each line and indent with two spaces (the Tab key isn’t used here). Read one chunk ahead.", 25),
+  A(24, "Python snippets", "Colons, f-strings, 4-space blocks", [], "Python blocks indent by four spaces. Don’t forget the colon at the end of def, if, for and class lines.", 25),
+  A(25, "SQL snippets", "Uppercase keywords and joins", [], "SQL keywords are typed in capitals, so lean on Shift with the opposite pinky, or tap Caps Lock for a whole word.", 25),
 ];
 
 export const getLesson = (id: number): LessonDef | undefined => LESSONS.find((l) => l.id === id);

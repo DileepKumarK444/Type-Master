@@ -130,6 +130,14 @@ export class TypingSession {
     return this._status === "running" ? this.expire(now) : false;
   }
 
+  /** End the session now ("Finish now" in untimed practice). Returns false if it was not running. */
+  stop(now: number): boolean {
+    if (this._status !== "running" && this._status !== "paused") return false;
+    if (this.expire(now)) return true; // a timed session that already ran out simply finishes at its limit
+    this.finishWith(this.elapsed(now));
+    return true;
+  }
+
   pause(now: number): void {
     if (this._status !== "running") return;
     this._status = "paused";

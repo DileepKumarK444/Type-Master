@@ -140,6 +140,34 @@ describe("time mode", () => {
   });
 });
 
+describe("stop (finish early)", () => {
+  it("ends a running untimed session with the time so far", () => {
+    const s = new TypingSession({ text: "hello world", mode: { kind: "text" } });
+    expect(s.stop(0)).toBe(false); // idle: nothing to stop
+    type(s, "hello", 0, 1000);
+    expect(s.stop(7000)).toBe(true);
+    expect(s.status).toBe("finished");
+    const r = s.result(99999);
+    expect(r.durationMs).toBe(7000);
+    expect(r.totalKeystrokes).toBe(5);
+    expect(s.stop(8000)).toBe(false); // already finished
+    expect(s.input("x", 9000)).toBe(false);
+  });
+  it("works while paused (time stops at the pause)", () => {
+    const s = new TypingSession({ text: "hello world", mode: { kind: "text" } });
+    s.input("h", 0);
+    s.pause(2000);
+    expect(s.stop(50000)).toBe(true);
+    expect(s.result(60000).durationMs).toBe(2000);
+  });
+  it("a timed session that already ran out finishes at its limit", () => {
+    const s = new TypingSession({ text: "abcdef", mode: { kind: "time", seconds: 1 } });
+    s.input("a", 0);
+    expect(s.stop(5000)).toBe(true);
+    expect(s.result(5000).durationMs).toBe(1000);
+  });
+});
+
 describe("pause / resume", () => {
   it("excludes paused time from elapsed", () => {
     const s = new TypingSession({ text: "abcdef", mode: { kind: "time", seconds: 60 } });
