@@ -5,7 +5,7 @@ Planning docs: [docs/](docs/README.md). App: `apps/web` (Next.js 15, TypeScript,
 ```bash
 npm install
 createdb typemaster_dev && createdb typemaster_test      # or: docker compose up -d (creates typemaster_dev)
-cp apps/web/.env.example apps/web/.env.local             # set DATABASE_URL and AUTH_SECRET (openssl rand -base64 32)
+npm run setup:env                                        # creates apps/web/.env.local and fills DATABASE_URL + AUTH_SECRET
 DATABASE_URL=postgres://localhost:5432/typemaster_dev npm run migrate -w packages/db
 npm run dev                                              # http://localhost:3000
 ```
