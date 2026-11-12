@@ -86,6 +86,7 @@ describe("weakKeys / keyAccuracy", () => {
     { key: "z", hits: 3, misses: 2 }, // too few attempts
     { key: "x", hits: 30, misses: 1 }, // too few misses
     { key: " ", hits: 5, misses: 40 }, // space excluded
+    { key: "\n", hits: 5, misses: 40 }, // Enter (code practice) excluded too
     { key: ";", hits: 15, misses: 5 }, // 75% tie → same misses → stable
   ];
   it("ranks by accuracy, applies thresholds, excludes space", () => {

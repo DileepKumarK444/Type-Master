@@ -29,7 +29,8 @@ export const userSettings = pgTable("user_settings", {
 export type SessionMode =
   | { seconds: number; punctuation: boolean; numbers: boolean }
   | { lessonId: number }
-  | { game: "word-rush"; seconds: number };
+  | { game: "word-rush"; seconds: number }
+  | { free: true; words: number | null }; // untimed practice; words null = endless
 
 export const typingSessions = pgTable(
   "typing_sessions",
@@ -38,7 +39,7 @@ export const typingSessions = pgTable(
     userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
     /** Client-generated id; makes retries and guest imports idempotent. */
     clientId: uuid("client_id").notNull(),
-    type: text("type").notNull().default("test"), // "test" | "drill" | "lesson" | "game"
+    type: text("type").notNull().default("test"), // "test" | "drill" | "free" | "lesson" | "game"
     lessonId: integer("lesson_id"),
     durationS: integer("duration_s").notNull(),
     wpm: real("wpm").notNull(),

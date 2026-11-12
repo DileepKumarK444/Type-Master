@@ -132,3 +132,26 @@ describe("password reset schemas", () => {
     expect(resetSchema.safeParse({ token, password: "password123" }).success).toBe(false);
   });
 });
+
+describe("free (untimed) practice payloads", () => {
+  const free = () => sessionInputSchema.parse({
+    clientId: ID, kind: "free", durationS: 95, wpm: 22, rawWpm: 23, accuracy: 96.2, consistency: 70, errors: 7,
+    keyStats: { a: { hits: 175, misses: 7 } }, mode: { free: true, words: 50 },
+  });
+  it("accepts a free session with a words count, endless (null), and runs longer than 10 minutes", () => {
+    expect(free().mode).toEqual({ free: true, words: 50 });
+    expect(sessionInputSchema.safeParse({ ...free(), mode: { free: true, words: null } }).success).toBe(true);
+    expect(sessionInputSchema.safeParse({ ...free(), durationS: 1800, wpm: 3, rawWpm: 3, keyStats: { a: { hits: 85, misses: 7 } }, accuracy: 92.4, errors: 7 }).success).toBe(true);
+    expect(sessionInputSchema.safeParse({ ...free(), durationS: 3601 }).success).toBe(false);
+  });
+  it("rejects malformed free modes", () => {
+    expect(sessionInputSchema.safeParse({ ...free(), mode: { free: false, words: 50 } }).success).toBe(false);
+    expect(sessionInputSchema.safeParse({ ...free(), mode: { free: true, words: 0 } }).success).toBe(false);
+    expect(sessionInputSchema.safeParse({ ...free(), mode: { free: true } }).success).toBe(false);
+  });
+  it("is held to the same plausibility rules as a test", () => {
+    expect(checkPlausible(free())).toEqual({ ok: true });
+    expect(checkPlausible({ ...free(), wpm: 200 })).toMatchObject({ ok: false });
+    expect(checkPlausible({ ...free(), durationS: 4 })).toEqual({ ok: false, reason: "too_short" });
+  });
+});

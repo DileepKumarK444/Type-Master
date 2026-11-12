@@ -11,7 +11,7 @@ export const pgCode = (e: unknown) => (e as { code?: string; cause?: { code?: st
 
 /** Fields stored for a session. `mode` and `durationS` are separate so lessons can pass a rounded float duration. */
 export type StoredSession = Omit<SessionInput, "mode" | "durationS" | "kind"> & { durationS: number; mode: SessionMode };
-export interface SessionMeta { type: "test" | "drill" | "lesson" | "game"; lessonId?: number; score?: number }
+export interface SessionMeta { type: "test" | "drill" | "free" | "lesson" | "game"; lessonId?: number; score?: number }
 
 export interface SaveOutcome {
   id: string;

@@ -7,16 +7,19 @@ const keyStat = z.object({ hits: z.number().int().min(0).max(10000), misses: z.n
 
 export const sessionInputSchema = z.object({
   clientId: z.string().uuid(),
-  durationS: z.number().int().min(1).max(600),
+  durationS: z.number().int().min(1).max(3600), // untimed practice can run longer than a timed test
   wpm: z.number().min(0).max(400),
   rawWpm: z.number().min(0).max(400),
   accuracy: z.number().min(0).max(100),
   consistency: z.number().min(0).max(100),
   errors: z.number().int().min(0).max(10000),
   keyStats: z.record(z.string().length(1), keyStat).refine((o) => Object.keys(o).length <= 100, "too many keys"),
-  mode: z.object({ seconds: z.number().int().min(1).max(600), punctuation: z.boolean(), numbers: z.boolean() }),
-  /** "drill" = weak-key drill (counts as practice time and key stats, but not toward speed records) */
-  kind: z.enum(["test", "drill"]).default("test"),
+  mode: z.union([
+    z.object({ seconds: z.number().int().min(1).max(600), punctuation: z.boolean(), numbers: z.boolean() }),
+    z.object({ free: z.literal(true), words: z.number().int().min(1).max(2000).nullable() }),
+  ]),
+  /** "drill" = key/template practice and "free" = untimed practice: both count as practice time and key stats, but not toward speed records; free earns no XP */
+  kind: z.enum(["test", "drill", "free"]).default("test"),
 });
 export type SessionInput = z.infer<typeof sessionInputSchema>;
 

@@ -8,6 +8,8 @@ export const DAILY_PRACTICE_XP_CAP = 500;
 
 export type Activity =
   | { kind: "test" | "drill" | "game"; durationS: number; accuracy: number }
+  /** untimed practice: saved to history and key stats, but earns no XP (no clock = nothing to measure effort against) */
+  | { kind: "free"; durationS: number; accuracy: number }
   | { kind: "lesson"; stars: number; previousBestStars: number };
 
 /** 0 below the gate; 1.0 from 90%, 1.5 from 95%, 2.0 from 98%. */
@@ -22,6 +24,7 @@ const PER_MINUTE: Record<"test" | "drill" | "game", number> = { test: 20, drill:
 
 /** XP before the daily cap. Lessons: 30/40/50 for 1/2/3 stars the first time; replays 5 (+10 per extra star). */
 export function xpFor(a: Activity): number {
+  if (a.kind === "free") return 0;
   if (a.kind === "lesson") {
     if (a.stars <= 0) return 0;
     if (a.previousBestStars <= 0) return 30 + 10 * (a.stars - 1);

@@ -46,6 +46,12 @@ describe.skipIf(!URL)("analytics queries", () => {
     expect(await saveSession(db, a, run(30, 45))).toMatchObject({ personalBest: false, previousBest: null }); // the 200-WPM drill is not a record to beat
   });
 
+  it("free (untimed) practice never counts toward personal bests", async () => {
+    const free = { ...run(250, 20), kind: "free" as const, mode: { free: true as const, words: 50 } };
+    expect((await saveSession(db, a, free)).personalBest).toBeUndefined();
+    expect(await saveSession(db, a, run(31, 20))).toMatchObject({ personalBest: false, previousBest: null }); // the 250-WPM free run is not a record to beat
+  });
+
   it("personal best ignores other users", async () => {
     expect(await saveSession(db, b, run(10))).toMatchObject({ personalBest: false, previousBest: null });
   });

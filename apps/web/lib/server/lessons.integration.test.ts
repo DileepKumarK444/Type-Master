@@ -87,11 +87,26 @@ describe.skipIf(!URL)("lesson completion", () => {
     expect((await getProgress(db, a)).find((x) => x.lessonId === 1)?.stars).toBe(3);
   });
 
-  it("the last lesson has no next lesson", async () => {
-    for (let id = 1; id <= 20; id++) {
+  it("the last lesson has no next lesson; the coding track (21-25) follows the core lessons", async () => {
+    for (let id = 1; id <= 25; id++) {
       const r = await completeLesson(db, b, id, attempt(99, 40));
-      expect(r.ok).toBe(true);
-      if (id === 20 && r.ok) expect(r.nextLessonId).toBeNull();
+      expect(r.ok, `lesson ${id}`).toBe(true);
+      if (r.ok) expect(r.nextLessonId).toBe(id === 25 ? null : id + 1);
+    }
+  });
+
+  it("coding lessons unlock after lesson 12, not after lesson 20", async () => {
+    const c = (await registerUser(db, { name: "C", email: `lc.${tag}@test.example`, password: "correct horse" })).id;
+    try {
+      expect(await completeLesson(db, c, 21, attempt(99, 40))).toMatchObject({ ok: false, reason: "locked" });
+      for (let id = 1; id <= 12; id++) await completeLesson(db, c, id, attempt(99, 40));
+      expect(await completeLesson(db, c, 22, attempt(99, 40))).toMatchObject({ ok: false, reason: "locked" }); // needs 21 first
+      expect(await completeLesson(db, c, 21, attempt(99, 40))).toMatchObject({ ok: true, passed: true });
+      expect(await completeLesson(db, c, 22, attempt(99, 40))).toMatchObject({ ok: true, passed: true });
+      expect(await completeLesson(db, c, 13, attempt(99, 40))).toMatchObject({ ok: true }); // core lessons are still open, in order
+      expect(await completeLesson(db, c, 15, attempt(99, 40))).toMatchObject({ ok: false, reason: "locked" });
+    } finally {
+      await deleteAccount(db, c);
     }
   });
 

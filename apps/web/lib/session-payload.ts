@@ -1,9 +1,9 @@
 import type { SessionResult } from "@typemaster/typing-engine";
 
-export type PracticeMode = { seconds: number; punctuation: boolean; numbers: boolean };
+export type PracticeMode = { seconds: number; punctuation: boolean; numbers: boolean } | { free: true; words: number | null };
 
 /** Shape POSTed to /api/sessions (validated server-side by sessionInputSchema). */
-export function toPayload(result: SessionResult, mode: PracticeMode, clientId: string, kind: "test" | "drill" = "test") {
+export function toPayload(result: SessionResult, mode: PracticeMode, clientId: string, kind: "test" | "drill" | "free" = "test") {
   return {
     kind,
     clientId,

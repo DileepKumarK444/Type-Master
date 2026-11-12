@@ -49,6 +49,15 @@ describe.skipIf(!URL)("XP, levels and badges", () => {
     expect(await xpOf(a)).toEqual({ xp: 30, level: 1 });
   });
 
+  it("free (untimed) practice earns no XP, sets no personal best and does not count as a test", async () => {
+    const before = await xpOf(a);
+    const r = await recordPractice(db, a, test({ kind: "free", mode: { free: true, words: 50 }, durationS: 120, wpm: 90, rawWpm: 91, accuracy: 99, errors: 1, keyStats: { a: { hits: 99, misses: 1 } } }));
+    expect(r.rewards).toMatchObject({ xpAwarded: 0, leveledUp: false, newBadges: [] });
+    expect(r.personalBest).toBeUndefined();
+    expect(await xpOf(a)).toEqual(before);
+    expect((await getUserStats(db, a)).testsCompleted).toBe(1); // only the timed test counts
+  });
+
   it("below the accuracy gate earns nothing (but the session is still saved)", async () => {
     const r = await recordPractice(db, a, test({ accuracy: 85, errors: 15, keyStats: { a: { hits: 85, misses: 15 } }, wpm: 30, rawWpm: 36 }));
     expect(r.rewards?.xpAwarded).toBe(0);

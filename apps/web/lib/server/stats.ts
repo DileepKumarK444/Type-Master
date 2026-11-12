@@ -109,7 +109,7 @@ const acc = (k: KeyRow) => (k.hits / (k.hits + k.misses)) * 100;
 export function weakKeys(rows: KeyRow[], opts: { minAttempts?: number; minMisses?: number; maxAccuracy?: number; limit?: number } = {}): WeakKey[] {
   const { minAttempts = 20, minMisses = 3, maxAccuracy = 95, limit = 6 } = opts;
   return rows
-    .filter((k) => k.key !== " " && k.hits + k.misses >= minAttempts && k.misses >= minMisses && acc(k) < maxAccuracy)
+    .filter((k) => k.key.trim() !== "" && k.hits + k.misses >= minAttempts && k.misses >= minMisses && acc(k) < maxAccuracy)
     .map((k) => ({ key: k.key, accuracy: r1(acc(k)), misses: k.misses, attempts: k.hits + k.misses }))
     .sort((a, b) => a.accuracy - b.accuracy || b.misses - a.misses)
     .slice(0, limit);
@@ -118,7 +118,7 @@ export function weakKeys(rows: KeyRow[], opts: { minAttempts?: number; minMisses
 /** Accuracy per key for the heatmap (keys with too few attempts are omitted, not shown as perfect). */
 export function keyAccuracy(rows: KeyRow[], minAttempts = 10): Record<string, number> {
   const out: Record<string, number> = {};
-  for (const k of rows) if (k.key !== " " && k.hits + k.misses >= minAttempts) out[k.key] = r1(acc(k));
+  for (const k of rows) if (k.key.trim() !== "" && k.hits + k.misses >= minAttempts) out[k.key] = r1(acc(k));
   return out;
 }
 

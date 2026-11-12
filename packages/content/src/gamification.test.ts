@@ -15,6 +15,9 @@ describe("xpFor", () => {
     expect(xpFor({ kind: "drill", durationS: 60, accuracy: 91 })).toBe(15);
     expect(xpFor({ kind: "game", durationS: 60, accuracy: 99 })).toBe(40);
   });
+  it("untimed (free) practice never earns XP, however accurate", () => {
+    expect(xpFor({ kind: "free", durationS: 600, accuracy: 100 })).toBe(0);
+  });
   it("gives nothing below the accuracy gate", () => {
     expect(xpFor({ kind: "test", durationS: 120, accuracy: 85 })).toBe(0);
   });
