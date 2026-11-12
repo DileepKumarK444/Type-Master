@@ -1,0 +1,529 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for build.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="prettify.css" />
+    <link rel="stylesheet" href="base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="index.html">All files</a> build.ts</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>120/120</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">98.63% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>72/73</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>19/19</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>120/120</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line high'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a>
+<a name='L105'></a><a href='#L105'>105</a>
+<a name='L106'></a><a href='#L106'>106</a>
+<a name='L107'></a><a href='#L107'>107</a>
+<a name='L108'></a><a href='#L108'>108</a>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a>
+<a name='L131'></a><a href='#L131'>131</a>
+<a name='L132'></a><a href='#L132'>132</a>
+<a name='L133'></a><a href='#L133'>133</a>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">64x</span>
+<span class="cline-any cline-yes">64x</span>
+<span class="cline-any cline-yes">64x</span>
+<span class="cline-any cline-yes">64x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">314x</span>
+<span class="cline-any cline-yes">314x</span>
+<span class="cline-any cline-yes">17350x</span>
+<span class="cline-any cline-yes">17350x</span>
+<span class="cline-any cline-yes">17350x</span>
+<span class="cline-any cline-yes">314x</span>
+<span class="cline-any cline-yes">314x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">718x</span>
+<span class="cline-any cline-yes">718x</span>
+<span class="cline-any cline-yes">718x</span>
+<span class="cline-any cline-yes">1636x</span>
+<span class="cline-any cline-yes">1636x</span>
+<span class="cline-any cline-yes">1636x</span>
+<span class="cline-any cline-yes">1636x</span>
+<span class="cline-any cline-yes">1636x</span>
+<span class="cline-any cline-yes">1636x</span>
+<span class="cline-any cline-yes">1636x</span>
+<span class="cline-any cline-yes">1636x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">102x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-yes">51x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-yes">81x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { COMMON_WORDS, generateText, rng } from "@typemaster/typing-engine";
+import { LESSONS, type LessonDef } from "./lessons";
+&nbsp;
+export type StepKind = "meet" | "drill" | "words" | "test";
+export interface LessonStep { kind: StepKind; title: string; hint: string; text: string }
+&nbsp;
+/** Extra short words made only of home-row letters, so the very first lessons can use real words. */
+const HOME_WORDS = ["ask", "asks", "add", "adds", "all", "alas", "dad", "dads", "fad", "fall", "falls", "flask", "flag", "flags", "gas", "glad", "gash", "gal", "half", "hall", "halls", "has", "hag", "had", "hash", "jag", "jags", "lad", "lads", "lag", "sad", "sag", "sash", "shall", "slash", "salad", "dash", "gaff", "alfalfa"];
+const POOL = [...new Set([...HOME_WORDS, ...COMMON_WORDS])];
+&nbsp;
+/** All practice words (shared with the weak-key drill generator). */
+export const WORD_POOL: readonly string[] = POOL;
+&nbsp;
+const LETTER = /^[a-z]$/;
+const letters = (keys: string[]) =&gt; keys.filter((k) =&gt; LETTER.test(k));
+&nbsp;
+/** Every key learned up to and including this lesson (beginner lessons only). */
+export function allowedKeys(id: number): string[] {
+  const set = new Set&lt;string&gt;();
+  for (const l of LESSONS) if (l.id &lt;= id &amp;&amp; l.level === "beginner") l.newKeys.forEach((k) =&gt; set.add(k));
+  return [...set];
+}
+&nbsp;
+export function shuffle&lt;T&gt;(arr: T[], rand: () =&gt; number): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i &gt; 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const pick = &lt;T&gt;(arr: T[], rand: () =&gt; number) =&gt; arr[Math.floor(rand() * arr.length)];
+&nbsp;
+/** Random key groups ("fj jf ffj"). `focus` keys are chosen with probability `ratio`. */
+function groups(rand: () =&gt; number, focus: string[], all: string[], count: number, min: number, max: number, ratio: number): string[] {
+  const out: string[] = [];
+  for (let i = 0; i &lt; count; i++) {
+    const len = min + Math.floor(rand() * (max - min + 1));
+    let g = "";
+    for (let c = 0; c &lt; len; c++) g += pick(focus.length &amp;&amp; rand() &lt; ratio ? focus : all, rand);
+    if (focus.length &amp;&amp; !focus.some((k) =&gt; g.includes(k))) g = g.slice(0, -1) + pick(focus, rand);
+    out.push(g);
+  }
+  return out;
+}
+&nbsp;
+/** Real words made only of `allowed` letters, preferring ones containing a new letter. Falls back to key groups. */
+function realWords(rand: () =&gt; number, allowed: string[], newKeys: string[], count: number): string[] {
+  const set = new Set(letters(allowed));
+  const fits = POOL.filter((w) =&gt; [...w].every((c) =&gt; set.has(c)));
+  const fresh = letters(newKeys);
+  const withNew = fresh.length ? fits.filter((w) =&gt; fresh.some((k) =&gt; w.includes(k))) : fits;
+  const chosen = shuffle(withNew, rand).slice(0, Math.ceil(count * 0.7));
+  const rest = shuffle(fits, rand).filter((w) =&gt; !chosen.includes(w)).slice(0, count - chosen.length);
+  const out = [...chosen, ...rest];
+  while (out.length &lt; count) out.push(...groups(rand, fresh, [...set], 1, 2, 4, 0.7));
+  return shuffle(out, rand).slice(0, count);
+}
+&nbsp;
+/** Sprinkle the new punctuation keys (, .) after some words so they get practised in context. */
+function withPunctuation(words: string[], newKeys: string[]): string[] {
+  const marks = newKeys.filter((k) =&gt; k === "," || k === ".");
+  if (!marks.length) return words;
+  return words.map((w, i) =&gt; (i % 3 === 2 ? w + marks[(i / 3 | 0) % marks.length] : w));
+}
+&nbsp;
+const capitalise = (w: string) =&gt; w[0].toUpperCase() + w.slice(1);
+const commonWords = (rand: () =&gt; number, n: number) =&gt; Array.from({ length: n }, () =&gt; pick([...COMMON_WORDS], rand));
+&nbsp;
+const SENTENCES: Record&lt;number, string[]&gt; = {
+  18: [
+    "The cat sat on the warm mat.", "We went to the park today.", "She reads a book every night.", "The sun rises in the east.",
+    "My brother plays the guitar.", "Rain tapped on the window.", "They made fresh bread together.", "Our dog loves long walks.",
+  ],
+  19: [
+    "When the bell rang, everyone hurried outside, laughing.", "Do you think we can finish before the rain starts?",
+    "I packed a sandwich, an apple, and a small bottle of water.", "Slowly, carefully, she carried the tray across the room.",
+    "Which road leads to the old lighthouse, and how far is it?", "He smiled, waved, and walked quietly down the hill.",
+    "If it snows tonight, will school be closed tomorrow?", "Learning to type is simple, but it takes steady practice.",
+  ],
+  20: [
+    "The lighthouse stood at the edge of the world, its beam sweeping slowly across the dark water.",
+    "Every evening, the keeper climbed the long spiral stairs, checked the great lamp, and wrote a few lines in his journal.",
+    "Ships passed far away, small and silent, trusting that tiny light to guide them home.",
+    "On stormy nights the waves rose high, yet the old tower never trembled; it simply waited for morning.",
+    "Typing is much the same: small, steady movements, repeated patiently, until the rhythm feels natural.",
+    "When your fingers know the way, your mind is free to think about what you want to say.",
+  ],
+};
+&nbsp;
+function lettersSteps(def: LessonDef, rand: () =&gt; number): string[] {
+  const allowed = allowedKeys(def.id);
+  const fresh = def.newKeys;
+  const focus = fresh.length ? fresh : allowed;
+  const allLetters = allowed.length ? <span class="branch-0 cbranch-no" title="branch not covered" >allowed : [];</span>
+  const meet = groups(rand, focus, focus, 8, 2, 3, 1).join(" ");
+  const drill = groups(rand, focus, allLetters, 12, 2, 4, 0.6).join(" ");
+  const words = withPunctuation(realWords(rand, allowed, fresh, 10), fresh).join(" ");
+  const testCount = def.id &lt;= 4 ? 14 : 20;
+  const test = withPunctuation(realWords(rand, allowed, fresh.length &amp;&amp; def.id &lt; 12 ? fresh : [], testCount), fresh).join(" ");
+  return [meet, drill, words, test];
+}
+&nbsp;
+function digitsSteps(def: LessonDef, rand: () =&gt; number): string[] {
+  const d = def.newKeys;
+  const num = (min: number, max: number) =&gt; groups(rand, d, d, 1, min, max, 1)[0];
+  const meet = Array.from({ length: 8 }, () =&gt; num(2, 3)).join(" ");
+  const drill = Array.from({ length: 12 }, () =&gt; num(2, 4)).join(" ");
+  const mixed = (n: number) =&gt; Array.from({ length: n }, (_, i) =&gt; (i % 2 ? num(1, 3) : pick([...COMMON_WORDS], rand))).join(" ");
+  return [meet, drill, mixed(12), mixed(24)];
+}
+&nbsp;
+function capitalsSteps(rand: () =&gt; number): string[] {
+  const caps = (n: number, p: number) =&gt; commonWords(rand, n).map((w) =&gt; (rand() &lt; p ? capitalise(w) : w)).join(" ");
+  return [commonWords(rand, 8).map(capitalise).join(" "), caps(12, 0.6), commonWords(rand, 10).map(capitalise).join(" "), caps(20, 0.4)];
+}
+&nbsp;
+function punctSteps(rand: () =&gt; number): string[] {
+  const sentence = (seed: number, words: number) =&gt; generateText({ words, seed: Math.floor(rand() * 1e6) + seed, punctuation: true });
+  return ["Yes. No. Maybe, yes! Really? Okay, fine.", sentence(1, 10), sentence(2, 14), sentence(3, 26)];
+}
+&nbsp;
+function sentencesSteps(def: LessonDef): string[] {
+  const s = SENTENCES[def.id];
+  return [s[0], `${s[1]} ${s[2]}`, s.slice(2, 5).join(" "), s.slice(3, def.id === 20 ? 6 : 7).join(" ")];
+}
+&nbsp;
+const STEP_META: Omit&lt;LessonStep, "text"&gt;[] = [
+  { kind: "meet", title: "Meet the keys", hint: "Take your time. Learn where each finger goes." },
+  { kind: "drill", title: "Drill", hint: "Repeat the patterns. Accuracy first, speed will follow." },
+  { kind: "words", title: "Words", hint: "Now the keys appear inside real words." },
+  { kind: "test", title: "Mini test", hint: "Reach the accuracy goal to pass this lesson." },
+];
+&nbsp;
+/** Deterministic: the same lesson always produces the same four texts (so a retry uses the same text). */
+export function buildLesson(def: LessonDef): LessonStep[] {
+  const rand = rng(def.id * 7919 + 13);
+  let texts: string[];
+  switch (def.kind) {
+    case "digits": texts = digitsSteps(def, rand); break;
+    case "capitals": texts = capitalsSteps(rand); break;
+    case "punct": texts = punctSteps(rand); break;
+    case "sentences": texts = sentencesSteps(def); break;
+    case "words": texts = [8, 12, 16, 25].map((n) =&gt; commonWords(rand, n).join(" ")); break;
+    default: texts = lettersSteps(def, rand);
+  }
+  return STEP_META.map((m, i) =&gt; ({ ...m, text: texts[i] }));
+}
+&nbsp;</pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2026-11-12T16:56:32.263Z
+            </div>
+        <script src="prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="sorter.js"></script>
+        <script src="block-navigation.js"></script>
+    </body>
+</html>
+    
