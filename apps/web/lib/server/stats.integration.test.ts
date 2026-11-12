@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createDb } from "@typemaster/db";
-import { runMigrations } from "@typemaster/db/src/migrate";
 import { deleteAccount } from "./account";
 import { saveSession } from "./sessions";
 import { getKeyAccuracy, getSession, getStreak, getWeakKeys, sessionsSince } from "./stats";
@@ -21,7 +20,6 @@ describe.skipIf(!URL)("analytics queries", () => {
   });
 
   beforeAll(async () => {
-    await runMigrations(URL!);
     a = (await registerUser(db, { name: "A", email: `sa.${tag}@test.example`, password: "correct horse" })).id;
     b = (await registerUser(db, { name: "B", email: `sb.${tag}@test.example`, password: "battery staple" })).id;
   });

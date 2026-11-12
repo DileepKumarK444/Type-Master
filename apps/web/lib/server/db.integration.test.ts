@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 import { createDb, keyStats, typingSessions, userSettings, users } from "@typemaster/db";
-import { runMigrations } from "@typemaster/db/src/migrate";
 import { deleteAccount, exportData, getProfile, updateProfile } from "./account";
 import { UserGoneError, getKeyStats, listSessions, saveSession } from "./sessions";
 import { EmailTakenError, getUserIdByEmail, registerUser, upsertGoogleUser, verifyCredentials } from "./users";
@@ -23,7 +22,6 @@ describe.skipIf(!URL)("database services", () => {
   const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 
   beforeAll(async () => {
-    await runMigrations(URL!);
     a = (await registerUser(db, { name: "Alice", email: email("alice"), password: "correct horse" })).id;
     b = (await registerUser(db, { name: "Bob", email: email("bob"), password: "battery staple" })).id;
   });

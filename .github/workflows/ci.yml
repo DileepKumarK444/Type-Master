@@ -19,6 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
+      - name: Apply database migrations
+        run: npm run migrate -w packages/db
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test

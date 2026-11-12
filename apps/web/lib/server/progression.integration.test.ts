@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 import { createDb, userBadges, users } from "@typemaster/db";
-import { runMigrations } from "@typemaster/db/src/migrate";
 import { DAILY_PRACTICE_XP_CAP } from "@typemaster/content";
 import { deleteAccount } from "./account";
 import { recordGame, recordPractice } from "./activity";
@@ -34,7 +33,6 @@ describe.skipIf(!URL)("XP, levels and badges", () => {
   const xpOf = async (id: string) => (await db.select({ xp: users.xp, level: users.level }).from(users).where(eq(users.id, id)))[0];
 
   beforeAll(async () => {
-    await runMigrations(URL!);
     a = (await registerUser(db, { name: "A", email: `pa.${tag}@test.example`, password: "correct horse" })).id;
     b = (await registerUser(db, { name: "B", email: `pb.${tag}@test.example`, password: "battery staple" })).id;
   });

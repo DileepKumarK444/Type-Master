@@ -1,7 +1,6 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 import { createDb, passwordResetTokens, users } from "@typemaster/db";
-import { runMigrations } from "@typemaster/db/src/migrate";
 import { deleteAccount } from "./account";
 import { RESET_TTL_MINUTES, createResetToken, hashToken, isResetTokenValid, newToken, resetPassword } from "./password-reset";
 import { getSessionVersion, registerUser, upsertGoogleUser, verifyCredentials } from "./users";
@@ -26,7 +25,6 @@ describe.skipIf(!URL)("password reset", () => {
   const ids: string[] = [];
   const mk = async (n: string, password = "old password 1") => { const { id } = await registerUser(db, { name: n, email: email(n), password }); ids.push(id); return id; };
 
-  beforeAll(async () => { await runMigrations(URL!); });
   afterAll(async () => { for (const id of ids) await deleteAccount(db, id).catch(() => {}); await client.end(); });
 
   it("unknown email creates nothing and returns null (callers answer identically)", async () => {

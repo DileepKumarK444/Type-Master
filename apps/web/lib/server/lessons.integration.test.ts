@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 import { createDb, keyStats, typingSessions } from "@typemaster/db";
-import { runMigrations } from "@typemaster/db/src/migrate";
 import { deleteAccount } from "./account";
 import { completeLesson, getProgress } from "./lessons";
 import { UserGoneError } from "./sessions";
@@ -25,7 +24,6 @@ describe.skipIf(!URL)("lesson completion", () => {
   };
 
   beforeAll(async () => {
-    await runMigrations(URL!);
     a = (await registerUser(db, { name: "A", email: `la.${tag}@test.example`, password: "correct horse" })).id;
     b = (await registerUser(db, { name: "B", email: `lb.${tag}@test.example`, password: "battery staple" })).id;
   });
