@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>TypeMaster — proposed changes (mockups)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+:root{--bg:250 250 248;--surface:255 255 255;--surface2:242 242 238;--line:230 230 224;--fg:28 28 26;--muted:100 100 92;--accent:47 91 234;--accent-soft:232 238 254;--ok:14 107 50;--bad:185 28 28;--warn:138 80 5;--r:10px}
+body{font-family:Inter,sans-serif;background:#d9dbe1;color:rgb(var(--fg));padding:30px;display:flex;flex-direction:column;gap:40px;align-items:flex-start;font-size:15px;line-height:1.5}
+.c{--c-bg:rgb(var(--bg))}
+.shot{background:rgb(var(--bg));position:relative;overflow:hidden;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.18)}
+.shot.m .tag{bottom:84px;right:auto;left:16px}
+.shot.d{width:1280px;height:760px}.shot.m{width:390px;height:800px}
+.tag{position:absolute;z-index:20;background:#111;color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:99px;right:16px;bottom:14px;letter-spacing:.02em}
+.mono{font-family:'JetBrains Mono',monospace}.mut{color:rgb(var(--muted))}.b{font-weight:700}
+.card{background:rgb(var(--surface));border:1px solid rgb(var(--line));border-radius:var(--r);padding:20px}
+.btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;border:1px solid rgb(var(--line));background:rgb(var(--surface));color:rgb(var(--fg));border-radius:8px;padding:9px 16px;font:inherit;font-weight:600;font-size:14px}
+.btn.p{background:rgb(var(--accent));color:#fff;border-color:rgb(var(--accent))}.btn.lg{padding:12px 22px;font-size:16px}.btn.sm{padding:6px 12px;font-size:13px}
+.pill{display:inline-flex;gap:6px;align-items:center;padding:3px 10px;border-radius:99px;background:rgb(var(--accent-soft));color:rgb(var(--accent));font-size:12px;font-weight:700}
+.pill.warn{background:rgb(var(--warn)/.15);color:rgb(var(--warn))}.pill.ok{background:rgb(var(--ok)/.15);color:rgb(var(--ok))}
+.tabs{display:inline-flex;background:rgb(var(--surface2));border-radius:9px;padding:4px;gap:2px}
+.tabs span{padding:6px 14px;border-radius:6px;font-weight:600;font-size:14px;color:rgb(var(--muted));white-space:nowrap}
+.tabs span.on{background:#fff;color:rgb(var(--fg));box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.tabs span.new{position:relative}.tabs span.new::after{content:"NEW";position:absolute;top:-9px;right:-4px;background:rgb(var(--accent));color:#fff;font-size:9px;padding:1px 5px;border-radius:99px;font-weight:800}
+.ic{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* shell */
+.app{display:grid;grid-template-columns:236px 1fr;height:100%}
+.side{background:#fff;border-right:1px solid rgb(var(--line));padding:16px;display:flex;flex-direction:column;gap:4px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;padding:2px 8px 14px}.logo i{width:32px;height:32px;border-radius:9px;background:rgb(var(--accent));color:#fff;display:grid;place-items:center;font:700 13px 'JetBrains Mono',monospace;font-style:normal}
+.nav{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;font-weight:600;color:rgb(var(--muted))}.nav.on{background:rgb(var(--accent-soft));color:rgb(var(--accent))}
+.main{padding:16px 32px;position:relative;overflow:hidden}
+.top{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:#fff;border:1px solid rgb(var(--line));font-weight:700;font-size:13px}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,rgb(var(--accent)),#7c3aed);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;border:2px solid #fff;box-shadow:0 0 0 2px rgb(var(--accent))}
+.menu{position:absolute;right:32px;top:62px;width:260px;background:#fff;border:1px solid rgb(var(--line));border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.16);padding:8px;z-index:10}
+.menu .who{padding:10px 12px;border-bottom:1px solid rgb(var(--line));margin-bottom:6px}
+.menu .it{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:8px;font-weight:600}.menu .it.out{color:rgb(var(--bad))}.menu .it.hl{background:rgb(var(--accent-soft))}
+.ghost{filter:blur(2px);opacity:.55}
+.callout{position:absolute;z-index:15;background:#111;color:#fff;font-size:13px;padding:8px 12px;border-radius:8px;max-width:260px;line-height:1.35}
+.callout::before{content:"";position:absolute;left:-6px;top:14px;width:12px;height:12px;background:#111;transform:rotate(45deg)}
+.callout.r::before{left:auto;right:-6px}
+/* tab bar */
+.tabbar{position:absolute;left:0;right:0;bottom:0;background:#fff;border-top:1px solid rgb(var(--line));display:flex;justify-content:space-around;padding:8px 4px 14px}
+.tabbar div{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10px;font-weight:700;color:rgb(var(--muted));min-width:56px}.tabbar div.on{color:rgb(var(--accent))}
+.row{display:flex;align-items:center;gap:12px}.sp{justify-content:space-between}.col{display:flex;flex-direction:column;gap:12px}.wrap{flex-wrap:wrap}
+.list .it{display:flex;align-items:center;gap:14px;padding:14px 4px;border-bottom:1px solid rgb(var(--line));font-weight:600}.list .it:last-child{border:0}
+.live{display:flex;gap:32px}.live b{font:700 32px 'JetBrains Mono',monospace;display:block;line-height:1.2}.live span{font-size:12px;color:rgb(var(--muted))}
+.bar{height:8px;border-radius:99px;background:rgb(var(--surface2));overflow:hidden}.bar i{display:block;height:100%;background:rgb(var(--accent));border-radius:99px}
+.tx{font:400 22px/3rem 'JetBrains Mono',monospace;letter-spacing:.02em;border:2px solid rgb(var(--accent));border-radius:10px;padding:2px 20px;height:9.5rem;overflow:hidden}
+.tx .ok{color:rgb(var(--fg))}.tx .pend{color:rgb(var(--muted))}.tx .bad{background:rgb(var(--bad)/.15);color:rgb(var(--bad));text-decoration:underline}.tx .cur{background:rgb(var(--accent-soft));box-shadow:0 2px 0 rgb(var(--accent))}.tx .foc{color:rgb(var(--accent));font-weight:700}
+.m .tx{font-size:17px;line-height:2.5rem;height:8rem;padding:2px 12px}
+/* keys */
+.keys{display:flex;flex-direction:column;align-items:center;gap:6px}.keys .r{display:flex;gap:6px}
+.k{width:44px;height:44px;border-radius:9px;border:1px solid rgb(var(--line));background:rgb(var(--surface2));display:grid;place-items:center;font:500 14px 'JetBrains Mono',monospace;text-transform:uppercase;color:rgb(var(--muted))}
+.k.hot{background:rgb(var(--accent));color:#fff;border-color:rgb(var(--accent));transform:translateY(-2px)}.k.ring{box-shadow:0 0 0 2px rgb(var(--accent))}
+.tile{border:1px solid rgb(var(--line));background:#fff;border-radius:10px;padding:8px 2px;text-align:center;position:relative}
+.tile .ch{font:700 22px 'JetBrains Mono',monospace;text-transform:uppercase;line-height:1.1}.tile .ac{font-size:11px;font-weight:700;margin-top:2px}
+.tile.g{background:rgb(var(--ok)/.10)}.tile.a{background:rgb(var(--warn)/.12)}.tile.r{background:rgb(var(--bad)/.12)}.tile.n{background:rgb(var(--surface2))}
+.tile.sel{outline:3px solid rgb(var(--accent));outline-offset:1px}
+.tile .tinybar{height:4px;border-radius:9px;background:rgb(var(--surface2));margin:5px 6px 0;overflow:hidden}.tile .tinybar i{display:block;height:100%}
+.chipbtn{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:99px;border:1px solid rgb(var(--line));background:#fff;font-weight:600;font-size:13px}.chipbtn.on{background:rgb(var(--accent));color:#fff;border-color:rgb(var(--accent))}
+h1{font-size:30px;line-height:1.15;letter-spacing:-.01em}h2{font-size:18px}h3{font-size:15px}
+.note{font-size:12px;color:rgb(var(--muted))}
+.grid{display:grid;gap:10px}
+</style></head><body>
+<div id="out"></div>
+<script>
+const IC={home:'M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10',book:'M4 4h6a3 3 0 013 3v13a2 2 0 00-2-2H4zM20 4h-6a3 3 0 00-3 3v13a2 2 0 012-2h7z',kbd:'M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2zM6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10',game:'M4 7h16a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2zM7 10v5M4.5 12.5h5M16 11h.01M18 14h.01',chart:'M3 3v18h18M7 15l4-4 3 3 5-6',trophy:'M8 21h8M12 17v4M7 4h10v6a5 5 0 01-10 0zM17 5h3v2a3 3 0 01-3 3M7 5H4v2a3 3 0 003 3',user:'M12 4a4 4 0 100 8 4 4 0 000-8zM4 21a8 8 0 0116 0',flame:'M12 2s5 4 5 9a5 5 0 01-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-8z',more:'M5 12h.01M12 12h.01M19 12h.01',moon:'M21 13A9 9 0 1111 3a7 7 0 0010 10z',out:'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9',chev:'M6 9l6 6 6-6',x:'M6 6l12 12M18 6L6 18',target:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 8a4 4 0 100 8 4 4 0 000-8z',clock:'M12 3a9 9 0 100 18 9 9 0 000-18zM12 7v5l3 2',check:'M5 13l4 4L19 7',grid:'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z'};
+const ic=(n,c='')=>`<svg class="ic ${c}" viewBox="0 0 24 24"><path d="${IC[n]}"/></svg>`;
+const NAV=[['home','Dashboard'],['book','Learn'],['kbd','Practice'],['game','Games'],['chart','Progress'],['trophy','Achievements']];
+const side=(on,foot='')=>`<aside class="side"><div class="logo"><i>tm</i>TypeMaster</div>${NAV.map(n=>`<div class="nav ${n[1]==on?'on':''}">${ic(n[0])}${n[1]}</div>`).join('')}<div style="flex:1"></div>${foot||`<div class="nav">${ic('user')}Dileep Kumar</div>`}</aside>`;
+const topbar=(extra='')=>`<div class="top"><span class="chip">${ic('flame')}<span style="color:rgb(var(--warn))">9</span></span><span class="chip">${ic('trophy')}Lv 3</span><span class="chip" style="padding:7px">${ic('moon')}</span>${extra}</div>`;
+const tabbar=(on)=>`<div class="tabbar">${[['home','Home'],['book','Learn'],['kbd','Practice'],['game','Games'],['more','More']].map(t=>`<div class="${t[1]==on?'on':''}">${ic(t[0])}${t[1]}</div>`).join('')}</div>`;
+const shot=(id,cls,tag,html)=>`<div class="shot ${cls}" id="${id}"><span class="tag">${tag}</span>${html}</div>`;
+
+/* ---------- 1. Logout (desktop) ---------- */
+const s1=shot('s1','d','1 · Logout: header menu + sidebar button',`<div class="app">${side('Dashboard',`<div class="nav" style="justify-content:space-between"><span class="row">${ic('user')}Dileep Kumar</span><span style="color:rgb(var(--bad))" title="Log out">${ic('out')}</span></div>`)}
+<main class="main">${topbar(`<div class="avatar">DK</div>`)}
+<div class="ghost"><h1>Welcome back, Dileep</h1><p class="mut" style="margin:4px 0 20px">Your next lesson, this week’s numbers and your weak keys.</p><div class="card" style="height:110px;margin-bottom:14px"></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px"><div class="card" style="height:100px"></div><div class="card" style="height:100px"></div><div class="card" style="height:100px"></div></div></div>
+<div class="menu"><div class="who"><div class="b">Dileep Kumar</div><div class="mut" style="font-size:13px">dileepkumark444@gmail.com</div></div><div class="it">${ic('user')}Profile &amp; settings</div><div class="it">${ic('trophy')}Achievements</div><div class="it out hl">${ic('out')}Log out</div></div>
+<div class="callout" style="right:312px;top:112px">Click your avatar anywhere in the app → <b>Log out</b> is one click away</div>
+<div class="callout r" style="left:20px;bottom:76px;width:210px;display:none"></div>
+</main></div>`);
+
+/* ---------- 2. Logout + More (mobile) ---------- */
+const s2=shot('s2','m','2 · Mobile: “More” tab becomes a real menu',`<div class="c" style="padding:18px 16px 90px"><div class="top" style="justify-content:space-between"><h1 style="font-size:26px">More</h1><div class="row"><span class="chip">${ic('flame')}<span style="color:rgb(var(--warn))">9</span></span><span class="chip">${ic('trophy')}Lv 3</span></div></div>
+<div class="card row" style="margin-bottom:14px"><div class="avatar" style="width:46px;height:46px">DK</div><div><div class="b">Dileep Kumar</div><div class="mut" style="font-size:13px">Level 3 · 140 / 283 XP</div></div></div>
+<div class="card list" style="padding:6px 16px"><div class="it">${ic('chart')}Progress<span style="margin-left:auto" class="mut">›</span></div><div class="it">${ic('trophy')}Achievements<span style="margin-left:auto" class="mut">›</span></div><div class="it">${ic('user')}Profile &amp; settings<span style="margin-left:auto" class="mut">›</span></div><div class="it">${ic('moon')}Dark theme<span style="margin-left:auto;width:42px;height:24px;border-radius:99px;background:rgb(var(--line));position:relative"><i style="position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff"></i></span></div></div>
+<div class="card" style="margin-top:14px;padding:6px 16px"><div class="it row" style="padding:14px 0;color:rgb(var(--bad));font-weight:700">${ic('out')}Log out</div></div></div>${tabbar('More')}`);
+
+/* ---------- 3. Practice: No timer ---------- */
+const s3=shot('s3','d','3 · Practice → “No timer” option (running)',`<div class="app">${side('Practice')}<main class="main">${topbar()}
+<h1>Practice</h1><p class="mut" style="margin:4px 0 16px">Timed test, or practise at your own pace.</p>
+<div class="row sp wrap" style="margin-bottom:12px"><div class="row" style="gap:14px"><div class="tabs"><span>15s</span><span>30s</span><span>60s</span><span>120s</span><span class="on new">No timer</span></div><div class="row" style="gap:6px"><span class="mut" style="font-size:13px">Length</span><div class="tabs"><span>25 words</span><span class="on">50 words</span><span>100 words</span><span>Endless</span></div></div></div><div class="row" style="gap:18px;font-weight:600;font-size:14px"><span>Punctuation ${`<i style="display:inline-block;width:32px;height:18px;border-radius:99px;background:rgb(var(--line));vertical-align:middle"></i>`}</span><span>Numbers ${`<i style="display:inline-block;width:32px;height:18px;border-radius:99px;background:rgb(var(--line));vertical-align:middle"></i>`}</span></div></div>
+<div class="card" style="padding:22px"><div class="live" style="margin-bottom:10px"><div><span>WPM</span><b>48</b></div><div><span>Accuracy</span><b>97%</b></div><div><span>Time</span><b>0:42</b></div><div><span>Words</span><b>18 / 50</b></div></div>
+<div class="bar" style="margin-bottom:12px"><i style="width:36%"></i></div>
+<div class="tx"><span class="ok">the people could never write about </span><span class="ok">each </span><span class="bad">s</span><span class="ok">ound</span> <span class="ok">before </span><span class="ok">they </span><span class="ok">found </span><span class="ok">some </span><span class="ok">water </span><span class="cur">a</span><span class="pend">round the place and every </span><span class="pend">thing was going well when the story began again</span></div>
+<div class="row sp" style="margin-top:12px"><span class="note">No timer: take your time. Backspace works · Tab then Enter restarts · Esc pauses</span><div class="row"><span class="btn sm">Restart</span><span class="btn sm p">Finish now</span></div></div></div>
+<div class="card" style="margin-top:14px;display:flex;gap:12px;align-items:flex-start;background:rgb(var(--accent-soft));border-color:transparent"><span style="color:rgb(var(--accent))">${ic('clock')}</span><div style="font-size:13px"><b>How “No timer” counts (proposed)</b><br>Saved to your history and practice time · key accuracy updates · earns XP at the normal rate · <b>not</b> compared with your personal bests (speed with no clock isn’t a fair record).</div></div>
+</main></div>`);
+
+/* ---------- 4. Free-practice results ---------- */
+const s4=shot('s4','d','4 · Results after “No timer” practice',`<div class="app">${side('Practice')}<main class="main">${topbar()}<h1>Practice</h1><p class="mut" style="margin:4px 0 16px">Free practice · 50 words</p>
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:14px"><div class="col"><div class="card" style="text-align:center;padding:30px"><div class="mut" style="font-size:14px">Words per minute</div><div class="mono" style="font-size:72px;font-weight:700;line-height:1;color:rgb(var(--accent))">46</div><div class="mut" style="font-size:12px;margin:8px 0 18px">Free practice: not compared with personal bests</div><div class="row" style="justify-content:center;gap:34px"><div><div class="mut" style="font-size:12px">Accuracy</div><div class="b" style="font-size:20px">96%</div></div><div><div class="mut" style="font-size:12px">Consistency</div><div class="b" style="font-size:20px">78%</div></div><div><div class="mut" style="font-size:12px">Time</div><div class="b" style="font-size:20px">1:18</div></div><div><div class="mut" style="font-size:12px">Words</div><div class="b" style="font-size:20px">50</div></div></div></div>
+<div class="card"><h3>Speed through the session</h3><svg viewBox="0 0 600 130" width="100%"><path d="M20 90 L90 60 L160 70 L230 45 L300 55 L370 40 L440 52 L510 38 L580 44" fill="none" stroke="rgb(47 91 234)" stroke-width="2.5"/></svg></div></div>
+<div class="col"><div class="card"><h3>Problem keys</h3><div class="row" style="margin-top:12px;gap:10px"><div class="k" style="background:rgb(var(--bad)/.2);color:rgb(var(--fg))">s</div><div class="k" style="background:rgb(var(--bad)/.2);color:rgb(var(--fg))">c</div><div class="k" style="background:rgb(var(--bad)/.2);color:rgb(var(--fg))">p</div></div></div><div class="card"><span class="pill">+16 XP</span> <span class="note">saved to your history</span></div><span class="btn p lg" style="width:100%">Drill S, C, P</span><span class="btn" style="width:100%">Practise again</span></div></div></main></div>`);
+
+/* ---------- 5. Practice by key (templates) ---------- */
+const acc={q:76,w:94,e:98,r:97,t:96,y:91,u:97,i:98,o:96,p:74,a:99,s:92,d:98,f:99,g:97,h:96,j:99,k:98,l:97,z:90,x:93,c:88,v:94,b:95,n:97,m:96};
+const tile=(ch,sel)=>{const a=acc[ch];const cls=a>=97?'g':a>=93?'a':'r';const col=a>=97?'var(--ok)':a>=93?'var(--warn)':'var(--bad)';return `<div class="tile ${cls} ${sel?'sel':''}"><div class="ch">${ch}</div><div class="ac" style="color:rgb(${col})">${a}%</div><div class="tinybar"><i style="width:${a}%;background:rgb(${col})"></i></div></div>`};
+const rows=['qwertyuiop','asdfghjkl','zxcvbnm'];
+const s5=shot('s5','d','5 · New: Practice by key (character templates)',`<div class="app">${side('Practice')}<main class="main">${topbar()}
+<h1>Practice by key</h1><p class="mut" style="margin:4px 0 14px">Pick a character, a finger, a row or a hand and practise just that.</p>
+<div class="row" style="margin-bottom:12px;gap:14px"><div class="tabs"><span>Timed test</span><span class="on">By key</span><span>Weak keys</span></div><div class="tabs"><span class="on">Letters</span><span>Numbers</span><span>Symbols</span><span>Rows &amp; fingers</span></div></div>
+<div style="display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start">
+<div class="card" style="padding:18px"><div class="row sp" style="margin-bottom:10px"><h3>Your accuracy per letter</h3><span class="note">🟢 97%+ &nbsp;🟡 93–96% &nbsp;🔴 under 93%</span></div>
+<div class="col" style="gap:8px;align-items:center">${rows.map((r,i)=>`<div class="grid" style="grid-template-columns:repeat(${r.length},54px);gap:6px;margin-left:${[0,27,54][i]}px">${[...r].map(c=>tile(c,c==='e')).join('')}</div>`).join('')}</div>
+<div style="margin-top:14px"><div class="note" style="margin-bottom:6px">Quick templates</div><div class="row wrap" style="gap:8px"><span class="chipbtn">Home row</span><span class="chipbtn">Top row</span><span class="chipbtn">Bottom row</span><span class="chipbtn">Left hand</span><span class="chipbtn">Right hand</span><span class="chipbtn">Left pinky</span><span class="chipbtn">Right index</span><span class="chipbtn">Vowels</span></div></div></div>
+<div class="card col" style="gap:12px;padding:18px"><div class="row sp"><h2>Letter <span class="mono" style="color:rgb(var(--accent))">E</span></h2><span class="pill ok">98% accurate</span></div><div class="note">Left middle finger · 1,240 keystrokes so far</div>
+<div class="k" style="width:100%;height:auto;text-transform:none;padding:12px 14px;justify-content:start;text-align:left;font-size:15px;line-height:1.5;background:#fff;color:rgb(var(--fg))">eel ewe tee eve see were here every never ever seem there</div>
+<div class="note" style="margin-top:-6px">Preview: real words packed with E</div>
+<div><div class="note" style="margin-bottom:6px">Mode</div><div class="tabs"><span>30s</span><span>60s</span><span class="on">No timer</span></div></div>
+<div><div class="note" style="margin-bottom:6px">Length</div><div class="tabs"><span>25 words</span><span class="on">50 words</span><span>Endless</span></div></div>
+<span class="btn p lg">Start practising E</span></div></div></main></div>`);
+
+/* ---------- 6. Key drill running ---------- */
+const s6=shot('s6','d','6 · Practising a single key (E), no timer',`<div class="app">${side('Practice')}<main class="main">${topbar()}
+<div class="row sp" style="margin-bottom:12px"><div><h1>Practice by key</h1><div class="row" style="margin-top:6px;gap:8px"><span class="pill">Focus: <span class="mono">E</span></span><span class="pill">No timer · 50 words</span></div></div><span class="btn sm">Change key</span></div>
+<div class="card" style="padding:22px"><div class="live" style="margin-bottom:10px"><div><span>WPM</span><b>41</b></div><div><span>Accuracy on E</span><b>100%</b></div><div><span>Time</span><b>0:25</b></div><div><span>Words</span><b>9 / 50</b></div></div><div class="bar" style="margin-bottom:12px"><i style="width:18%"></i></div>
+<div class="tx"><span class="ok">tee</span> <span class="ok">ever</span> <span class="ok">eel</span> <span class="ok">were</span> <span class="ok">here</span> <span class="ok">seem</span> <span class="ok">even</span> <span class="ok">see</span> <span class="ok">her</span> <span class="pend">ew</span><span class="cur foc">e</span><span class="pend"> never every there eve ewe tree free three speed need seen green </span><span class="pend">sleep street be me we she he the then them these where</span></div>
+<div class="row sp" style="margin-top:12px"><span class="note">The letter you’re practising is highlighted on the keyboard</span><div class="row"><span class="btn sm">Restart</span><span class="btn sm p">Finish now</span></div></div></div>
+<div class="card" style="margin-top:14px;padding:14px"><div class="keys">${['1234567890','qwertyuiop','asdfghjkl;','zxcvbnm,./'].map((r,i)=>`<div class="r" style="margin-left:${[0,16,30,52][i]}px">${[...r].map(c=>`<div class="k ${c==='e'?'hot':''}" style="height:38px;width:38px">${c}</div>`).join('')}</div>`).join('')}</div></div>
+</main></div>`);
+
+/* ---------- 7. Mobile: practice by key ---------- */
+const s7=shot('s7','m','7 · Mobile: Practice by key',`<div class="c" style="padding:16px 16px 90px"><div class="top" style="justify-content:space-between"><h1 style="font-size:24px">Practice by key</h1><span class="chip">${ic('flame')}<span style="color:rgb(var(--warn))">9</span></span></div>
+<div class="tabs" style="width:100%;margin-bottom:10px"><span style="flex:1;text-align:center">Timed</span><span class="on" style="flex:1;text-align:center">By key</span><span style="flex:1;text-align:center">Weak</span></div>
+<div class="tabs" style="margin-bottom:12px;max-width:100%"><span class="on">Letters</span><span>Numbers</span><span>Symbols</span><span>Rows</span></div>
+<div class="grid" style="grid-template-columns:repeat(5,1fr);gap:8px">${[...'qwertyuiopasdfghjklzxcvbnm'].map(c=>tile(c,c==='e')).join('').replace(/class="tile/g,'class="tile').replace(/font:700 26px/g,'font:700 22px')}</div>
+<div class="card col" style="margin-top:12px;padding:14px;gap:10px"><div class="row sp"><h3>Letter <span class="mono" style="color:rgb(var(--accent))">E</span> · 98%</h3><div class="tabs"><span>60s</span><span class="on">No timer</span></div></div><span class="btn p">Start practising E</span></div></div>${tabbar('Practice')}`);
+
+document.getElementById('out').outerHTML=[s1,s2,s3,s4,s5,s6,s7].join('');
+</script></body></html>
