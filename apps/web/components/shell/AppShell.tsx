@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -31,10 +32,18 @@ export function AppShell({ children, user, streak = 0, level }: { children: Reac
           </Link>
         ))}
         <div className="flex-1" />
-        <Link href="/app/profile" className={cn("flex items-center gap-3 rounded-token px-3 py-2.5 font-semibold",
-          path.startsWith("/app/profile") ? "bg-accent-soft text-accent" : "text-muted hover:bg-surface2 hover:text-fg")}>
-          <Icon name="user" /><span className="truncate">{user ? user.name : "Profile"}</span>
-        </Link>
+        <div className="flex items-center gap-1">
+          <Link href="/app/profile" className={cn("flex min-w-0 flex-1 items-center gap-3 rounded-token px-3 py-2.5 font-semibold",
+            path.startsWith("/app/profile") ? "bg-accent-soft text-accent" : "text-muted hover:bg-surface2 hover:text-fg")}>
+            <Icon name="user" /><span className="truncate">{user ? user.name : "Profile"}</span>
+          </Link>
+          {user && (
+            <button type="button" onClick={() => signOut({ callbackUrl: "/" })} aria-label="Log out" title="Log out"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-token text-bad hover:bg-bad/10">
+              <Icon name="logout" />
+            </button>
+          )}
+        </div>
       </aside>
 
       <div className="min-w-0">

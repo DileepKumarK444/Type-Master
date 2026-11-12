@@ -25,6 +25,7 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - run: npm run build:test -w apps/web
       - name: End-to-end + accessibility (Playwright, Google Chrome)
         run: npm run e2e -w apps/web
       - name: Lighthouse (performance, accessibility, best practices, SEO >= 90)

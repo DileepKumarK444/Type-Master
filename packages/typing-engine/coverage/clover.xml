@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1794513264293" clover="3.2.0">
-  <project timestamp="1794513264293" name="All files">
+<coverage generated="1794514643849" clover="3.2.0">
+  <project timestamp="1794514643849" name="All files">
     <metrics statements="364" coveredstatements="364" conditionals="177" coveredconditionals="176" methods="44" coveredmethods="44" elements="585" coveredelements="584" complexity="0" loc="364" ncloc="364" packages="1" files="3" classes="3"/>
     <file name="session.ts" path="/Users/dileepkumar/Downloads/typemaster/packages/typing-engine/src/session.ts">
       <metrics statements="158" coveredstatements="158" conditionals="90" coveredconditionals="89" methods="23" coveredmethods="23"/>

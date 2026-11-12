@@ -23,7 +23,9 @@ export function useTypingSession(text: string, mode: SessionMode) {
   const back = useCallback(() => { if (session.backspace(Date.now())) bump(); }, [session]);
   const pause = useCallback(() => { session.pause(Date.now()); bump(); }, [session]);
   const resume = useCallback(() => { session.resume(Date.now()); bump(); }, [session]);
+  /** End an untimed session now ("Finish now"). */
+  const finish = useCallback(() => { if (session.stop(Date.now())) bump(); }, [session]);
 
   const snap: Snapshot = session.snapshot(Date.now());
-  return { session, snap, type, back, pause, resume };
+  return { session, snap, type, back, pause, resume, finish };
 }

@@ -14,6 +14,7 @@
 | 8 | Development roadmap | [08-development-roadmap.md](08-development-roadmap.md) |
 | 9 | Decisions log | [09-decisions-log.md](09-decisions-log.md) |
 | 10 | Launch readiness (M6) | [10-launch-readiness.md](10-launch-readiness.md) |
+| 11 | Mockups for the logout / no-timer / practice-by-key round (now built) | [mockups/](mockups/) |
 
 ## Viewing the prototype
 Open `prototype/index.html` in a browser. Top bar: **Screen** picker (all 18), **Design** A/B/C, **Device** desktop/mobile, **State** normal/loading/empty/error. Click through the UI itself too. The typing practice and lesson screens accept real typing; keyboard keys light up. Everything else is a visual mockup.

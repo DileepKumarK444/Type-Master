@@ -23,7 +23,8 @@ export async function deleteAccount(page: Page) {
 }
 
 /** The text currently shown in the typing surface. */
-export const typingText = (page: Page) => page.locator('[role="textbox"][aria-label="Text to type"]').textContent();
+/** The text currently shown in the typing surface (code lines show Enter as ↵; convert back to a real newline). */
+export const typingText = async (page: Page) => ((await page.locator('[role="textbox"][aria-label="Text to type"]').textContent()) ?? "").replace(/↵/g, "\n");
 
 const OUTBOX = join(__dirname, "..", "test-results", "emails.jsonl");
 

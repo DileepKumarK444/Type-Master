@@ -24,3 +24,13 @@ test("signed-in app uses the bottom tab bar and fits a phone", async ({ page }) 
   }
   await deleteAccount(page);
 });
+
+test("the More tab is a real menu with every page and a Log out button", async ({ page }) => {
+  await register(page, "more");
+  await page.getByRole("navigation", { name: "Tabs" }).getByRole("link", { name: "More" }).click();
+  await expect(page.getByRole("heading", { name: "More", level: 1 })).toBeVisible();
+  for (const name of ["Progress", "Achievements", "Profile & settings"]) await expect(page.getByRole("link", { name })).toBeVisible();
+  await noHorizontalScroll(page, "/app/more");
+  await page.getByRole("button", { name: "Log out" }).click();
+  await page.waitForURL("**/");
+});

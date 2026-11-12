@@ -16,7 +16,8 @@ In development, password-reset links are printed in the server log (no email pro
 
 ## More checks
 ```bash
-npm run build && npm run e2e -w apps/web         # Playwright + axe accessibility, on a throwaway DB (needs Google Chrome)
-npm run lighthouse -w apps/web                   # Lighthouse mobile audit of 12 pages; fails below 90
+npm run build:test -w apps/web && npm run e2e -w apps/web   # Playwright + axe accessibility, on a throwaway DB (needs Google Chrome)
+npm run build:test -w apps/web && npm run lighthouse -w apps/web   # Lighthouse mobile audit of 12 pages; fails below 90
+# (build:test writes to apps/web/.next-test, so it never disturbs a running `npm run dev`)
 ```
 Launch status, deployment steps and env vars: [docs/10-launch-readiness.md](docs/10-launch-readiness.md).

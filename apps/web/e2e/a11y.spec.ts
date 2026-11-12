@@ -39,7 +39,7 @@ test.describe("signed-in pages", () => {
 
   for (const theme of ["light", "dark"] as const) {
     test(`no serious accessibility issues (${theme})`, async () => {
-      for (const path of ["/app", "/app/learn", "/app/practice", "/app/progress", "/app/achievements", "/app/games", "/app/profile", "/app/lesson/1", "/app/games/word-rush"]) {
+      for (const path of ["/app", "/app/learn", "/app/practice", "/app/practice/keys", "/app/practice?t=code%3Ajs&m=free&w=25", "/app/practice?t=key%3Ae&m=free", "/app/more", "/app/progress", "/app/achievements", "/app/games", "/app/profile", "/app/lesson/1", "/app/games/word-rush"]) {
         await page.goto(path);
         await setTheme(page, theme);
         await scan(page, `${path} [${theme}]`);

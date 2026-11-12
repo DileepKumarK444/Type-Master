@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1794513263102" clover="3.2.0">
-  <project timestamp="1794513263102" name="All files">
+<coverage generated="1794514642631" clover="3.2.0">
+  <project timestamp="1794514642631" name="All files">
     <metrics statements="460" coveredstatements="458" conditionals="299" coveredconditionals="293" methods="65" coveredmethods="65" elements="824" coveredelements="816" complexity="0" loc="460" ncloc="460" packages="1" files="8" classes="8"/>
     <file name="build.ts" path="/Users/dileepkumar/Downloads/typemaster/packages/content/src/build.ts">
       <metrics statements="138" coveredstatements="138" conditionals="91" coveredconditionals="90" methods="22" coveredmethods="22"/>

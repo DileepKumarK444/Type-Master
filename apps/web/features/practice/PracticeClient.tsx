@@ -1,7 +1,8 @@
 "use client";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { weakKeyDrill } from "@typemaster/content";
-import { generateText } from "@typemaster/typing-engine";
+import { isCodeTemplate, templateInfo, templateText } from "@typemaster/content";
+import { generateText, type SessionMode } from "@typemaster/typing-engine";
 import { LiveStats } from "@/components/typing/LiveStats";
 import { ResultsCard } from "@/components/typing/ResultsCard";
 import { TypingSurface } from "@/components/typing/TypingSurface";
@@ -16,9 +17,25 @@ import { toPayload } from "@/lib/session-payload";
 import { useTypingSession } from "./useTypingSession";
 
 const DURATIONS = [15, 30, 60, 120];
+const FREE_LENGTHS: (number | null)[] = [25, 50, 100, null]; // null = endless (ends with "Finish now")
+export type Mode = number | "free";
+export type Template = { id: string; label: string };
 
-export function PracticeClient({ signedIn, showKeyboard, drillKeys, compact = false, lockedSeconds }: { signedIn: boolean; showKeyboard: boolean; drillKeys?: string[]; compact?: boolean; lockedSeconds?: number }) {
-  const [seconds, setSeconds] = useState(lockedSeconds ?? 60);
+type Props = {
+  signedIn: boolean;
+  showKeyboard: boolean;
+  /** practise a template (a key, a row, common words, code…) instead of random words */
+  template?: Template;
+  initialMode?: Mode;
+  initialWords?: number | null;
+  /** landing page: no controls, no keyboard, fixed length */
+  compact?: boolean;
+  lockedSeconds?: number;
+};
+
+export function PracticeClient({ signedIn, showKeyboard, template, initialMode, initialWords, compact = false, lockedSeconds }: Props) {
+  const [mode, setMode] = useState<Mode>(lockedSeconds ?? initialMode ?? 60);
+  const [words, setWords] = useState<number | null>(initialWords === undefined ? 50 : initialWords);
   const [punctuation, setPunctuation] = useState(false);
   const [numbers, setNumbers] = useState(false);
   const [seed, setSeed] = useState<number | null>(null); // null until mounted (avoids SSR text mismatch)
@@ -28,38 +45,57 @@ export function PracticeClient({ signedIn, showKeyboard, drillKeys, compact = fa
 
   if (seed === null) return <Card className="h-64 animate-pulse" aria-busy="true" aria-label="Loading" />;
 
-  return (
-    <Run key={`${seed}-${seconds}-${punctuation}-${numbers}`} seconds={seconds} seed={seed}
-      punctuation={punctuation} numbers={numbers} restart={restart} signedIn={signedIn} showKeyboard={showKeyboard} drillKeys={drillKeys} compact={compact}
-      controls={compact ? null : (
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Tabs items={DURATIONS.map((d) => `${d}s`)} defaultIndex={DURATIONS.indexOf(seconds)} onChange={(i) => setSeconds(DURATIONS[i])} />
-          {drillKeys ? (
-            <div className="flex items-center gap-2 text-sm font-semibold" aria-label="Weak-key drill">
-              Weak-key drill:
-              {drillKeys.map((k) => <kbd key={k} className="grid h-7 min-w-7 place-items-center rounded-md border border-line bg-bad/15 px-1.5 font-mono uppercase">{k}</kbd>)}
-            </div>
-          ) : (
-            <div className="flex items-center gap-5 text-sm font-semibold">
-              <label className="flex items-center gap-2">Punctuation <Toggle label="Punctuation" defaultOn={punctuation} onChange={setPunctuation} /></label>
-              <label className="flex items-center gap-2">Numbers <Toggle label="Numbers" defaultOn={numbers} onChange={setNumbers} /></label>
-            </div>
-          )}
+  const controls = compact ? null : (
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-3">
+        <Tabs
+          items={[...DURATIONS.map((d) => `${d}s`), "No timer"]}
+          defaultIndex={mode === "free" ? DURATIONS.length : DURATIONS.indexOf(mode)}
+          onChange={(i) => setMode(i === DURATIONS.length ? "free" : DURATIONS[i])}
+        />
+        {mode === "free" && (
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted">Length</span>
+            <Tabs items={["25 words", "50 words", "100 words", "Endless"]} defaultIndex={FREE_LENGTHS.indexOf(words)} onChange={(i) => setWords(FREE_LENGTHS[i])} />
+          </div>
+        )}
+      </div>
+      {template ? (
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          <span className="rounded-full bg-accent-soft px-3 py-1 text-accent">Focus: {template.label}</span>
+          <Link href="/app/practice/keys" className="text-muted underline hover:text-fg">Change</Link>
+        </div>
+      ) : (
+        <div className="flex items-center gap-5 text-sm font-semibold">
+          <label className="flex items-center gap-2">Punctuation <Toggle label="Punctuation" defaultOn={punctuation} onChange={setPunctuation} /></label>
+          <label className="flex items-center gap-2">Numbers <Toggle label="Numbers" defaultOn={numbers} onChange={setNumbers} /></label>
         </div>
       )}
+    </div>
+  );
+
+  return (
+    <Run
+      key={`${seed}-${mode}-${words}-${punctuation}-${numbers}`}
+      mode={mode} words={words} seed={seed} punctuation={punctuation} numbers={numbers} template={template}
+      restart={restart} signedIn={signedIn} showKeyboard={showKeyboard} compact={compact} controls={controls}
     />
   );
 }
 
-function Run({ seconds, seed, punctuation, numbers, restart, controls, signedIn, showKeyboard, drillKeys, compact }: {
-  seconds: number; seed: number; punctuation: boolean; numbers: boolean; restart: () => void; controls: React.ReactNode;
-  signedIn: boolean; showKeyboard: boolean; drillKeys?: string[]; compact: boolean;
+function Run({ mode, words, seed, punctuation, numbers, template, restart, controls, signedIn, showKeyboard, compact }: {
+  mode: Mode; words: number | null; seed: number; punctuation: boolean; numbers: boolean; template?: Template; restart: () => void;
+  controls: React.ReactNode; signedIn: boolean; showKeyboard: boolean; compact: boolean;
 }) {
-  const drill = !!drillKeys?.length;
-  // Enough words that nobody finishes the text before the timer (≈ 250 WPM ceiling).
-  const words = Math.ceil((seconds / 60) * 250) + 20;
-  const text = useRef(drill ? weakKeyDrill(drillKeys!, seed, words) : generateText({ words, seed, punctuation, numbers })).current;
-  const { session, snap, type, back, pause, resume } = useTypingSession(text, { kind: "time", seconds });
+  const free = mode === "free";
+  const seconds = free ? 0 : mode;
+  const code = !!template && isCodeTemplate(template.id);
+
+  // Timed: enough text that nobody finishes before the clock (≈ 250 WPM). Free: the chosen length (endless ≈ 400 words).
+  const targetWords = free ? (words ?? 400) : Math.ceil((seconds / 60) * 250) + 20;
+  const text = useRef(template ? templateText(template.id, seed, targetWords) : generateText({ words: targetWords, seed, punctuation, numbers })).current;
+  const sessionMode: SessionMode = free ? { kind: "text" } : { kind: "time", seconds };
+  const { session, snap, type, back, pause, resume, finish } = useTypingSession(text, sessionMode);
   const [pressed, setPressed] = useState<string>();
   const [version, setVersion] = useState(0);
 
@@ -73,6 +109,7 @@ function Run({ seconds, seed, punctuation, numbers, restart, controls, signedIn,
 
   const finished = snap.status === "finished";
   const result = useMemo(() => (finished ? session.result(Date.now()) : null), [finished, session]);
+  const kind = free ? "free" : template ? "drill" : "test";
   const [save, setSave] = useState<SaveResult>({ state: "saving" });
   const saved = useRef(false);
   const clientId = useRef<string>("");
@@ -80,33 +117,56 @@ function Run({ seconds, seed, punctuation, numbers, restart, controls, signedIn,
     if (!result) return;
     clientId.current ||= crypto.randomUUID();
     setSave({ state: "saving" });
-    setSave(await saveResult(toPayload(result, { seconds, punctuation, numbers }, clientId.current, drill ? "drill" : "test"), signedIn));
-  }, [result, seconds, punctuation, numbers, signedIn, drill]);
+    const payloadMode = free ? ({ free: true, words } as const) : { seconds, punctuation, numbers };
+    setSave(await saveResult(toPayload(result, payloadMode, clientId.current, kind), signedIn));
+  }, [result, free, words, seconds, punctuation, numbers, signedIn, kind]);
   useEffect(() => {
     if (result && !saved.current) { saved.current = true; void doSave(); }
   }, [result, doSave]);
-  const progress = snap.remainingMs === null ? 0 : (1 - snap.remainingMs / (seconds * 1000)) * 100;
+
+  // words typed so far (for the live "Words 18 / 50" counter)
+  const totalWords = useMemo(() => text.split(/\s+/).filter(Boolean).length, [text]);
+  const typed = text.slice(0, snap.index);
+  let doneWords = typed.split(/\s+/).filter(Boolean).length;
+  if (typed && !/\s$/.test(typed) && snap.index < text.length) doneWords -= 1; // the word in progress is not done yet
+
+  const progress = free ? (snap.index / text.length) * 100 : snap.remainingMs === null ? 0 : (1 - snap.remainingMs / (seconds * 1000)) * 100;
+  const keys = template ? templateInfo(template.id)?.keys ?? [] : [];
 
   return (
     <div className="space-y-4">
       {!finished && controls}
       {finished ? (
-        <ResultsCard result={result!} onRetry={restart} save={save} onRetrySave={doSave} signedIn={signedIn} drill={drill} compact={compact} />
+        <ResultsCard result={result!} onRetry={restart} save={save} onRetrySave={doSave} signedIn={signedIn} drill={!!template} free={free} compact={compact} />
       ) : (
         <>
           <Card className="space-y-4 p-6">
-            <LiveStats snap={snap} />
-            <Progress value={progress} label="Time elapsed" />
+            <LiveStats snap={snap} words={free ? { done: doneWords, total: words === null ? null : totalWords } : undefined} />
+            <Progress value={progress} label={free ? "Progress through the text" : "Time elapsed"} />
             <TypingSurface
               session={session} version={version} onChar={onChar} onBackspace={onBack} onRestart={restart}
               onFocusChange={(f) => (f ? resume() : pause())} autoFocus={!compact}
             />
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-xs text-muted">Timer starts on your first key · Backspace works · Tab then Enter restarts · Esc pauses</span>
-              <Button size="sm" variant="secondary" onClick={restart}>Restart</Button>
+              <span className="text-xs text-muted">
+                {code
+                  ? "Press Enter at the end of each line · indent with spaces (not Tab) · Esc pauses"
+                  : free
+                    ? "No timer: take your time. Backspace works · Tab then Enter restarts · Esc pauses"
+                    : "Timer starts on your first key · Backspace works · Tab then Enter restarts · Esc pauses"}
+              </span>
+              <div className="flex gap-2">
+                <Button size="sm" variant="secondary" onClick={restart}>Restart</Button>
+                {free && <Button size="sm" onClick={finish}>Finish now</Button>}
+              </div>
             </div>
           </Card>
-          {showKeyboard && !compact && <Card className="hidden md:block"><VirtualKeyboard next={session.nextChar} pressed={pressed} /></Card>}
+          {free && !compact && (
+            <p className="rounded-token bg-accent-soft px-4 py-3 text-xs">
+              <b>No timer:</b> saved to your history and key accuracy, but it earns no XP and isn’t compared with your personal bests.
+            </p>
+          )}
+          {showKeyboard && !compact && <Card className="hidden md:block"><VirtualKeyboard next={session.nextChar} pressed={pressed} highlight={keys} /></Card>}
         </>
       )}
     </div>

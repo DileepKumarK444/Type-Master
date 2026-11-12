@@ -74,7 +74,7 @@ export default async function Page() {
               </>
             ) : (
               <>
-                <div><h2 className="text-xl font-bold">All 20 lessons passed 🎉</h2><p className="text-sm text-muted">Keep your speed growing with timed tests and weak-key drills.</p></div>
+                <div><h2 className="text-xl font-bold">All {LESSONS.length} lessons passed 🎉</h2><p className="text-sm text-muted">Keep your speed growing with timed tests and weak-key drills.</p></div>
                 <Button size="lg" href="/app/practice">Take a test</Button>
               </>
             )}

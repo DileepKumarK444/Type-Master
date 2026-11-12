@@ -1,5 +1,5 @@
 "use client";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, memo, useEffect, useMemo, useRef, useState } from "react";
 import type { TypingSession } from "@typemaster/typing-engine";
 import { cn } from "@/lib/utils";
 
@@ -20,9 +20,11 @@ type Props = {
  * under the cursor (or one containing a mistake) is split into per-character spans. This keeps the DOM small
  * (a 60s test is ~270 words), which matters: the first style pass over ~1,700 spans cost ~850 ms on mobile.
  */
+const glyph = (c: string) => (c === "\n" ? "↵" : c); // code practice: Enter is shown as ↵, then the line breaks
+
 const Word = memo(function Word({ chars, states, cursor }: { chars: string; states: string; cursor: number }) {
-  if (cursor === -1 && /^0+$/.test(states)) return <span className="inline-block whitespace-pre text-muted">{chars}</span>;
-  if (cursor === -1 && /^1+$/.test(states)) return <span className="inline-block whitespace-pre text-fg">{chars}</span>;
+  if (cursor === -1 && /^0+$/.test(states)) return <span className="inline-block whitespace-pre text-muted">{[...chars].map(glyph).join("")}</span>;
+  if (cursor === -1 && /^1+$/.test(states)) return <span className="inline-block whitespace-pre text-fg">{[...chars].map(glyph).join("")}</span>;
   return (
     <span className="inline-block whitespace-pre">
       {[...chars].map((c, i) => {
@@ -39,7 +41,7 @@ const Word = memo(function Word({ chars, states, cursor }: { chars: string; stat
               cursor === i && "bg-accent-soft shadow-[0_2px_0_rgb(var(--accent))]",
             )}
           >
-            {c}
+            {glyph(c)}
           </span>
         );
       })}
@@ -62,7 +64,8 @@ export function TypingSurface({ session, onChar, onBackspace, onFocusChange, onR
 
   const words = useMemo(() => {
     const out: { chars: string; offset: number }[] = [];
-    for (const m of session.text.matchAll(/\S+\s?/g)) out.push({ chars: m[0], offset: m.index ?? 0 });
+    // Every character belongs to exactly one chunk: a word plus one trailing whitespace, or a run of whitespace (indentation).
+    for (const m of session.text.matchAll(/\S+\s?|\s+/g)) out.push({ chars: m[0], offset: m.index ?? 0 });
     return out;
   }, [session]);
 
@@ -115,7 +118,10 @@ export function TypingSurface({ session, onChar, onBackspace, onFocusChange, onR
           if (e.key === "Escape") inputRef.current?.blur();
           else if (e.key === "Tab") { e.preventDefault(); tabArmed.current = true; }
           else if (e.key === "Enter" && tabArmed.current) { tabArmed.current = false; onRestart(); }
-          else tabArmed.current = false;
+          else if (e.key === "Enter") {
+            tabArmed.current = false;
+            if (session.nextChar === "\n") { e.preventDefault(); handlers.current.onChar("\n"); } // code practice: Enter is a typed character
+          } else tabArmed.current = false;
         }}
       />
       <div
@@ -128,7 +134,12 @@ export function TypingSurface({ session, onChar, onBackspace, onFocusChange, onR
       >
         {visibleWords.map((w) => {
           const cursor = session.index >= w.offset && session.index < w.offset + w.chars.length ? session.index - w.offset : -1;
-          return <Word key={w.offset} chars={w.chars} states={session.stateString(w.offset, w.offset + w.chars.length)} cursor={cursor} />;
+          return (
+            <Fragment key={w.offset}>
+              <Word chars={w.chars} states={session.stateString(w.offset, w.offset + w.chars.length)} cursor={cursor} />
+              {w.chars.endsWith("\n") && <br />}
+            </Fragment>
+          );
         })}
       </div>
       {!focused && session.status !== "finished" && (

@@ -65,7 +65,7 @@ export function LessonPlayer({ lesson, steps, nextLessonId, bestStars, showKeybo
         {last && <div className="text-right text-xs text-muted">Pass mark<div className="text-base font-bold text-fg">{lesson.passAccuracy}% accuracy</div></div>}
       </Card>
 
-      <StepRun key={`${attempt}-${stepIdx}`} text={step.text} onFinish={setResult} onRestart={redo} showKeyboard={showKeyboard} highlight={lesson.newKeys.filter((k) => k.length === 1)} />
+      <StepRun key={`${attempt}-${stepIdx}`} text={step.text} onFinish={setResult} onRestart={redo} showKeyboard={showKeyboard} highlight={lesson.newKeys.filter((k) => k.length === 1)} code={lesson.level === "advanced"} />
 
       {result && !last && (
         <Card className="flex flex-wrap items-center justify-between gap-3" role="status">
@@ -84,8 +84,8 @@ export function LessonPlayer({ lesson, steps, nextLessonId, bestStars, showKeybo
   );
 }
 
-function StepRun({ text, onFinish, onRestart, showKeyboard, highlight }: {
-  text: string; onFinish: (r: SessionResult) => void; onRestart: () => void; showKeyboard: boolean; highlight: string[];
+function StepRun({ text, onFinish, onRestart, showKeyboard, highlight, code }: {
+  text: string; onFinish: (r: SessionResult) => void; onRestart: () => void; showKeyboard: boolean; highlight: string[]; code: boolean;
 }) {
   const { session, snap, type, back, pause, resume } = useTypingSession(text, { kind: "text" });
   const [version, setVersion] = useState(0);
@@ -105,7 +105,7 @@ function StepRun({ text, onFinish, onRestart, showKeyboard, highlight }: {
       <Card className="space-y-4 p-5">
         <LiveStats snap={snap} />
         <TypingSurface session={session} version={version} onChar={onChar} onBackspace={onBack} onRestart={onRestart} onFocusChange={(f) => (f ? resume() : pause())} />
-        <p className="text-xs text-muted">Backspace works · Tab then Enter restarts this step · Esc pauses</p>
+        <p className="text-xs text-muted">{code ? "Press Enter at the end of each line · indent with spaces (not Tab) · " : ""}Backspace works · Tab then Enter restarts this step · Esc pauses</p>
       </Card>
       {showKeyboard && <Card className="hidden md:block"><VirtualKeyboard next={finished ? undefined : session.nextChar} pressed={pressed} highlight={highlight} /></Card>}
     </div>

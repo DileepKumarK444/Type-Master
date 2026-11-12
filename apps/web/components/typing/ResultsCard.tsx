@@ -10,9 +10,17 @@ const SAVE_MSG: Record<SaveState, string> = {
   failed: "Couldn’t save yet — we’ll keep it and retry.", guest: "",
 };
 
-type Props = { result: SessionResult; onRetry: () => void; save: SaveResult; onRetrySave: () => void; signedIn: boolean; drill: boolean; compact?: boolean };
+type Props = {
+  result: SessionResult; onRetry: () => void; save: SaveResult; onRetrySave: () => void; signedIn: boolean;
+  /** key/template practice: counts as practice but never toward personal bests */
+  drill: boolean;
+  /** untimed practice: no clock, so no personal bests and no XP */
+  free?: boolean;
+  compact?: boolean;
+};
 
-export function ResultsCard({ result, onRetry, save, onRetrySave, signedIn, drill, compact = false }: Props) {
+export function ResultsCard({ result, onRetry, save, onRetrySave, signedIn, drill, free = false, compact = false }: Props) {
+  const noRecords = drill || free;
   const saveState = save.state;
   const problem = Object.entries(result.keyStats)
     .filter(([, s]) => s.misses > 0)
@@ -28,17 +36,18 @@ export function ResultsCard({ result, onRetry, save, onRetrySave, signedIn, dril
     <div className="grid gap-4 lg:grid-cols-[2fr_1fr]" data-testid="results">
       <div className="space-y-4">
         <Card className="py-8 text-center">
-          {!drill && save.personalBest && (
+          {!noRecords && save.personalBest && (
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-ok/15 px-3 py-1 text-sm font-bold text-ok" role="status" data-testid="pb-banner">
               ★ New personal best{typeof save.previousBest === "number" ? ` (was ${Math.round(save.previousBest)})` : ""}
             </div>
           )}
-          {!drill && saveState === "saved" && !save.personalBest && save.previousBest === null && (
+          {!noRecords && saveState === "saved" && !save.personalBest && save.previousBest === null && (
             <div className="mb-3 text-xs text-muted">First test of this length — this is your baseline.</div>
           )}
-          {!drill && saveState === "saved" && !save.personalBest && typeof save.previousBest === "number" && (
+          {!noRecords && saveState === "saved" && !save.personalBest && typeof save.previousBest === "number" && (
             <div className="mb-3 text-xs text-muted">Personal best for this length: {Math.round(save.previousBest)} WPM</div>
           )}
+          {free && <div className="mb-2 text-xs text-muted">Free practice · not compared with personal bests · no XP</div>}
           <div className="text-sm text-muted">Words per minute</div>
           <div className="font-mono text-7xl font-bold leading-none text-accent">{Math.round(result.wpm)}</div>
           <div className="mt-6 flex flex-wrap justify-center gap-8">
@@ -70,12 +79,12 @@ export function ResultsCard({ result, onRetry, save, onRetrySave, signedIn, dril
         </Card>
         <RewardsPanel rewards={save.rewards} />
         {signedIn && problem.length > 0 && !drill && <Button size="lg" className="w-full" href="/app/practice?drill=weak">Drill weak keys</Button>}
-        <Button size="lg" variant={signedIn && problem.length > 0 && !drill ? "secondary" : "primary"} className="w-full" onClick={onRetry}>{drill ? "Drill again" : "Try again"}</Button>
+        <Button size="lg" variant={signedIn && problem.length > 0 && !drill ? "secondary" : "primary"} className="w-full" onClick={onRetry}>{noRecords ? "Practise again" : "Try again"}</Button>
         {signedIn && !compact && <Button variant="ghost" className="w-full" href="/app">Back to dashboard</Button>}
         {saveState === "guest" ? (
           <Card className="space-y-2 bg-accent-soft">
             <p className="text-sm font-semibold">Save this score</p>
-            <p className="text-xs text-muted">Create a free account and this run is added to your history.</p>
+            <p className="text-xs">Create a free account and this run is added to your history.</p>
             <Button size="sm" href="/register">Sign up</Button>
           </Card>
         ) : (

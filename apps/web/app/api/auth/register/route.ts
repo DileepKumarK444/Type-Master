@@ -6,7 +6,8 @@ import { registerSchema } from "@/lib/server/validation";
 
 export async function POST(req: Request) {
   if (!sameOrigin(req)) return err("forbidden", 403);
-  const rl = rateLimit(`register:${clientIp(req)}`, 10, 60 * 60_000);
+  // 10 sign-ups per hour per IP by default; the e2e suite (which registers many throwaway accounts) raises it.
+  const rl = rateLimit(`register:${clientIp(req)}`, Number(process.env.REGISTER_RATE_LIMIT) || 10, 60 * 60_000);
   if (!rl.ok) return err("rate_limited", 429, { retryAfterS: rl.retryAfterS });
 
   const parsed = registerSchema.safeParse(await readJson(req));

@@ -1,4 +1,4 @@
-// Usage: npm run build && npm run lighthouse -w apps/web
+// Usage: npm run build:test -w apps/web && npm run lighthouse -w apps/web
 // Serves the production build on a throwaway DB, audits pages with Lighthouse's default mobile profile
 // (simulated slow 4G + 4x CPU slowdown) using the installed Google Chrome, and exits non-zero if the
 // launch targets are missed (docs/08 M6: performance >= 90, accessibility/best-practices/SEO >= 90).
@@ -16,11 +16,11 @@ const TARGET = 90;
 const PUBLIC = ["/", "/about", "/privacy", "/terms", "/login"];
 // Pages that are deliberately noindex (login, the whole signed-in app) are not held to an SEO score.
 const NOINDEX = (p) => p === "/login" || p.startsWith("/app");
-const AUTHED = ["/app", "/app/practice", "/app/learn", "/app/progress", "/app/achievements", "/app/games", "/app/profile"];
+const AUTHED = ["/app", "/app/practice", "/app/practice/keys", "/app/practice?t=code%3Ajs&m=free&w=50", "/app/more", "/app/learn", "/app/progress", "/app/achievements", "/app/games", "/app/profile"];
 
 if (!CHROME || !existsSync(CHROME)) { console.error("Chrome not found; install Google Chrome or set CHROME_PATH"); process.exit(2); }
 
-const server = spawn("npx", ["next", "start", "-p", String(PORT)], { env: { ...process.env, DATABASE_URL: DB, AUTH_SECRET: "lighthouse-only-secret", AUTH_TRUST_HOST: "true" }, stdio: "ignore" });
+const server = spawn("npx", ["next", "start", "-p", String(PORT)], { env: { ...process.env, NEXT_DIST_DIR: ".next-test", DATABASE_URL: DB, AUTH_SECRET: "lighthouse-only-secret", AUTH_TRUST_HOST: "true" }, stdio: "ignore" });
 const kill = () => { try { server.kill(); } catch {} };
 process.on("exit", kill);
 
@@ -69,7 +69,7 @@ try {
     rows.push({
       page: path, perf: Math.round(c.performance.score * 100), a11y: Math.round(c.accessibility.score * 100), bp: Math.round(c["best-practices"].score * 100),
       seo: Math.round(c.seo.score * 100), lcp: Math.round(a["largest-contentful-paint"].numericValue), cls: +a["cumulative-layout-shift"].numericValue.toFixed(3), tbt: Math.round(a["total-blocking-time"].numericValue),
-      redirected: new URL(r.lhr.finalDisplayedUrl).pathname !== path,
+      redirected: new URL(r.lhr.finalDisplayedUrl).pathname !== new URL(path, BASE).pathname, // compare paths only (a page may carry a ?query)
     });
     const worst = Object.values(a).filter((x) => x.score !== null && x.score < 0.9 && x.scoreDisplayMode === "numeric").map((x) => `${x.id}=${x.score}`);
     if (worst.length) console.log(`  ${path}: audits below 0.9 → ${worst.slice(0, 6).join(", ")}`);

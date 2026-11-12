@@ -6,7 +6,7 @@ test("pass lesson 1: locked lessons, failure tip, retry, stars, XP and badge", a
 
   await page.goto("/app/learn");
   await expect(page.getByRole("link", { name: /1\. Index fingers/ })).toBeVisible();
-  await expect(page.getByText("Locked — pass the previous lesson").first()).toBeVisible();
+  await expect(page.getByText("Locked — pass lesson 1 first").first()).toBeVisible();
   await page.goto("/app/lesson/3"); // locked: bounced back to the path
   await expect(page).toHaveURL(/\/app\/learn$/);
 
