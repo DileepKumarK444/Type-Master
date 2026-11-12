@@ -9,7 +9,8 @@ import puppeteer from "puppeteer-core";
 import * as chromeLauncher from "chrome-launcher";
 
 const PORT = 3201, BASE = `http://localhost:${PORT}`;
-const CHROME = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+// CHROME_PATH wins; otherwise ask chrome-launcher to find an installed Chrome/Chromium on macOS, Linux (incl. CI runners) or Windows.
+const CHROME = process.env.CHROME_PATH ?? chromeLauncher.Launcher.getFirstInstallation();
 const DB = process.env.DATABASE_URL_E2E ?? process.env.DATABASE_URL_TEST ?? `postgres://${process.env.USER ?? "postgres"}@localhost:5432/typemaster_test`;
 const TARGET = 90;
 const PUBLIC = ["/", "/about", "/privacy", "/terms", "/login"];
@@ -17,7 +18,7 @@ const PUBLIC = ["/", "/about", "/privacy", "/terms", "/login"];
 const NOINDEX = (p) => p === "/login" || p.startsWith("/app");
 const AUTHED = ["/app", "/app/practice", "/app/learn", "/app/progress", "/app/achievements", "/app/games", "/app/profile"];
 
-if (!existsSync(CHROME) && !process.env.CHROME_PATH) { console.error("Chrome not found; set CHROME_PATH"); process.exit(2); }
+if (!CHROME || !existsSync(CHROME)) { console.error("Chrome not found; install Google Chrome or set CHROME_PATH"); process.exit(2); }
 
 const server = spawn("npx", ["next", "start", "-p", String(PORT)], { env: { ...process.env, DATABASE_URL: DB, AUTH_SECRET: "lighthouse-only-secret", AUTH_TRUST_HOST: "true" }, stdio: "ignore" });
 const kill = () => { try { server.kill(); } catch {} };
