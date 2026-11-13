@@ -6,7 +6,7 @@ const NEW_PASSWORD = "orange walrus 77";
 test("forgot password → emailed link → new password; old sessions are signed out; the link works once", async ({ page, browser }) => {
   const email = await register(page, "reset"); // session A, signed in with the old password
 
-  const ctx = await browser.newContext({ baseURL: "http://localhost:3200" });
+  const ctx = await browser.newContext({ baseURL: `http://localhost:${process.env.E2E_PORT ?? 3200}` });
   const p = await ctx.newPage();
 
   // Unknown email gets exactly the same confirmation (no account enumeration)
@@ -22,7 +22,7 @@ test("forgot password → emailed link → new password; old sessions are signed
   await p.getByRole("button", { name: "Send reset link" }).click();
   await expect(p.getByRole("heading", { name: "Check your email" })).toBeVisible();
   const link = await latestResetLink(email);
-  expect(link).toMatch(/^http:\/\/localhost:3200\/reset-password\?token=/);
+  expect(link).toContain(`http://localhost:${process.env.E2E_PORT ?? 3200}/reset-password?token=`);
 
   // Reset form: mismatch and weak passwords are explained, then success
   await p.goto(link);

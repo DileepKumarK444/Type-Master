@@ -31,7 +31,7 @@ test.describe("signed-in pages", () => {
   test.describe.configure({ mode: "serial" });
   let page: Page;
   test.beforeAll(async ({ browser }) => {
-    const context = await browser.newContext({ baseURL: "http://localhost:3200" }); // axe requires an explicit context
+    const context = await browser.newContext({ baseURL: `http://localhost:${process.env.E2E_PORT ?? 3200}` }); // axe requires an explicit context
     page = await context.newPage();
     await register(page, "a11y");
   });

@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { defineConfig } from "@playwright/test";
 
-const PORT = 3200;
+const PORT = Number(process.env.E2E_PORT ?? 3200);
 export const EMAIL_OUTBOX = join(__dirname, "test-results", "emails.jsonl");
 const db = process.env.DATABASE_URL_E2E ?? process.env.DATABASE_URL_TEST ?? `postgres://${process.env.USER ?? "postgres"}@localhost:5432/typemaster_test`;
 

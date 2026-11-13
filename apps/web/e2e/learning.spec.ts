@@ -15,7 +15,11 @@ test("pass lesson 1: locked lessons, failure tip, retry, stars, XP and badge", a
   for (let step = 0; step < 3; step++) {
     await box.click();
     await page.keyboard.type((await typingText(page))!, { delay: 70 });
-    await page.getByRole("button", { name: "Continue →" }).click();
+    const cont = page.getByRole("button", { name: "Continue →" });
+    await expect(cont).toBeVisible();
+    await page.waitForTimeout(500); // Enter is ignored for a moment after the step finishes
+    if (step === 1) await cont.click(); // click still works
+    else await page.keyboard.press("Enter"); // Enter works too
   }
 
   // mini test: fail on purpose (type every F as D) → specific tip
@@ -27,7 +31,9 @@ test("pass lesson 1: locked lessons, failure tip, retry, stars, XP and badge", a
   await expect(outcome).toContainText(/You typed D instead of F \d+ times/);
 
   // retry with the same text, correctly
-  await page.getByRole("button", { name: "Try again (same text)" }).click();
+  await expect(page.getByRole("button", { name: "Try again (same text)" })).toBeVisible();
+  await page.waitForTimeout(500);
+  await page.keyboard.press("Enter"); // Enter = primary button (try again)
   await box.click();
   expect(await typingText(page)).toBe(text);
   await page.keyboard.type(text, { delay: 90 });

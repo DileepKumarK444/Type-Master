@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { SessionResult } from "@typemaster/typing-engine";
 import { failureTip, fingerName, type LessonStep } from "@typemaster/content";
@@ -17,6 +18,27 @@ import { cn } from "@/lib/utils";
 type Lesson = { id: number; title: string; level: string; tip: string; newKeys: string[]; passAccuracy: number; targetWpm: number };
 type Props = { lesson: Lesson; steps: LessonStep[]; nextLessonId: number | null; bestStars: number; showKeyboard: boolean };
 
+/** Run `action` when Enter is pressed (ignores key repeat, a short grace period so the Enter that finished typing
+ *  can't trigger it, and Enter on a focused button/link/field, which handle it themselves; the typing box doesn't). */
+function useEnterKey(action: (() => void) | null) {
+  const ref = useRef(action);
+  ref.current = action;
+  const active = action !== null;
+  useEffect(() => {
+    if (!active) return;
+    const armedAt = Date.now() + 400;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Enter" || e.repeat || e.defaultPrevented || Date.now() < armedAt) return;
+      const t = e.target;
+      if (t instanceof Element && t.closest("button, a, textarea, select, input:not([aria-label='Typing input'])")) return;
+      e.preventDefault();
+      ref.current?.();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [active]);
+}
+
 export function LessonPlayer({ lesson, steps, nextLessonId, bestStars, showKeyboard }: Props) {
   const [stepIdx, setStepIdx] = useState(0);
   const [attempt, setAttempt] = useState(0);
@@ -24,6 +46,8 @@ export function LessonPlayer({ lesson, steps, nextLessonId, bestStars, showKeybo
   const step = steps[stepIdx];
   const last = stepIdx === steps.length - 1;
   const redo = useCallback(() => { setResult(null); setAttempt((a) => a + 1); }, []);
+  const next = useCallback(() => { setResult(null); setStepIdx((i) => i + 1); }, []);
+  useEnterKey(result && !last ? next : null);
 
   return (
     <main id="main" tabIndex={-1} className="mx-auto max-w-4xl space-y-4 p-4 outline-none md:p-8">
@@ -73,9 +97,10 @@ export function LessonPlayer({ lesson, steps, nextLessonId, bestStars, showKeybo
             <p className="font-bold">{result.accuracy >= 90 ? "Nice work!" : "Keep practising"} · {Math.round(result.accuracy)}% accuracy · {Math.round(result.wpm)} WPM</p>
             <p className="text-sm text-muted">{result.accuracy >= 90 ? "Ready for the next step." : "You can repeat this step before moving on."}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <span className="hidden text-xs text-muted md:inline">or press <kbd className="rounded border border-line bg-surface2 px-1.5 font-mono">Enter</kbd></span>
             <Button variant="secondary" onClick={redo}>Repeat step</Button>
-            <Button onClick={() => { setResult(null); setStepIdx(stepIdx + 1); }}>Continue →</Button>
+            <Button onClick={next}>Continue →</Button>
           </div>
         </Card>
       )}
@@ -140,6 +165,15 @@ function FinalPanel({ lesson, result, nextLessonId, onRetry }: { lesson: Lesson;
     if (!started.current) { started.current = true; void submit(); }
   }, [submit]);
 
+  const router = useRouter();
+  const passedNow = state === "done" && !!outcome?.passed;
+  // Enter = the primary button: next lesson / back to path when passed, try again otherwise (and after a save error).
+  useEnterKey(
+    state === "done" && outcome
+      ? passedNow ? () => router.push(nextLessonId ? `/app/lesson/${nextLessonId}` : "/app/learn") : onRetry
+      : state === "error" ? submit : state === "rejected" ? onRetry : null,
+  );
+
   const tip = useMemo(() => failureTip({ keyStats: result.keyStats, confusions: result.confusions, accuracy: result.accuracy, passAccuracy: lesson.passAccuracy }), [result, lesson.passAccuracy]);
 
   if (state === "saving") return <Card role="status" className="text-center text-muted">Saving your result…</Card>;
@@ -178,6 +212,7 @@ function FinalPanel({ lesson, result, nextLessonId, onRetry }: { lesson: Lesson;
         <p className="mx-auto max-w-lg rounded-token bg-accent-soft px-4 py-3 text-sm"><b>Tip:</b> {tip}</p>
       )}
       <div className="mx-auto max-w-sm"><RewardsPanel rewards={outcome.rewards} /></div>
+      <p className="hidden text-xs text-muted md:block">Press <kbd className="rounded border border-line bg-surface2 px-1.5 font-mono">Enter</kbd> to {passed ? (nextLessonId ? "start the next lesson" : "go back to the path") : "try again"}</p>
       <div className="flex flex-wrap justify-center gap-3">
         {passed && nextLessonId && <Button href={`/app/lesson/${nextLessonId}`} size="lg">Next lesson →</Button>}
         {passed && !nextLessonId && <Button href="/app/learn" size="lg">Back to path</Button>}
