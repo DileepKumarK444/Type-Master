@@ -34,11 +34,17 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
   const title = wantsWeak ? "Weak-key drill" : template ? "Practice by key" : "Practice";
   const blurb = wantsWeak ? "Words built around the keys you miss most." : template ? "Focused practice on exactly what you chose." : "Practise against the clock, or at your own pace with no timer.";
 
-  return (
-    <div className="mx-auto max-w-5xl">
+  const heading = (
+    <>
       {profile && <PracticeTabs active={active} />}
       <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
-      <p className="mb-6 mt-1 text-muted">{blurb}</p>
+      <p className="mt-1 text-muted">{blurb}</p>
+    </>
+  );
+
+  return (
+    <div className="mx-auto max-w-5xl">
+      {wantsWeak && weak.length === 0 && <div className="mb-6">{heading}</div>}
       {wantsWeak && weak.length === 0 ? (
         <Card className="grid place-items-center gap-3 border-dashed py-14 text-center">
           <p className="text-lg font-bold">No weak keys yet</p>
@@ -47,7 +53,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
         </Card>
       ) : (
         <PracticeClient
-          signedIn={!!profile} showKeyboard={profile?.prefs?.showKeyboard ?? true} template={template}
+          heading={heading} signedIn={!!profile} showKeyboard={profile?.prefs?.showKeyboard ?? true} template={template}
           initialMode={parseMode(q.m) ?? (wantsWeak ? 60 : undefined)} initialWords={parseWords(q.w)}
         />
       )}

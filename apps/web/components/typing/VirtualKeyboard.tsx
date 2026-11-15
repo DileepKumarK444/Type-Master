@@ -77,7 +77,7 @@ export function VirtualKeyboard({ next, pressed, fingers = true, highlight = [],
   };
 
   return (
-    <div className="flex flex-col items-center gap-[var(--gap)] [--gap:0.25rem] [--u:2.2rem] lg:[--u:2.75rem]" aria-hidden="true">
+    <div className="flex flex-col items-center gap-[var(--gap)] [--gap:0.25rem] [--u:2rem] lg:[--u:clamp(2rem,calc((100vh_-_34rem)/5),2.75rem)]" aria-hidden="true">
       {ROWS.map((r, i) => <div key={i} className="flex gap-[var(--gap)]">{r.map(key)}</div>)}
     </div>
   );

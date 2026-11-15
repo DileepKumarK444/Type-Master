@@ -31,9 +31,11 @@ type Props = {
   /** landing page: no controls, no keyboard, fixed length */
   compact?: boolean;
   lockedSeconds?: number;
+  /** page title block, shown top-left with the options on the right (large screens) */
+  heading?: React.ReactNode;
 };
 
-export function PracticeClient({ signedIn, showKeyboard, template, initialMode, initialWords, compact = false, lockedSeconds }: Props) {
+export function PracticeClient({ signedIn, showKeyboard, template, initialMode, initialWords, compact = false, lockedSeconds, heading }: Props) {
   const [mode, setMode] = useState<Mode>(lockedSeconds ?? initialMode ?? 60);
   const [words, setWords] = useState<number | null>(initialWords === undefined ? 50 : initialWords);
   const [punctuation, setPunctuation] = useState(false);
@@ -46,8 +48,8 @@ export function PracticeClient({ signedIn, showKeyboard, template, initialMode, 
   if (seed === null) return <Card className="h-64 animate-pulse" aria-busy="true" aria-label="Loading" />;
 
   const controls = compact ? null : (
-    <div className="flex flex-wrap items-center justify-between gap-3">
-      <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-col gap-3 lg:items-end">
+      <div className="flex flex-wrap items-center gap-3 lg:justify-end">
         <Tabs
           items={[...DURATIONS.map((d) => `${d}s`), "No timer"]}
           defaultIndex={mode === "free" ? DURATIONS.length : DURATIONS.indexOf(mode)}
@@ -61,7 +63,7 @@ export function PracticeClient({ signedIn, showKeyboard, template, initialMode, 
         )}
       </div>
       {template ? (
-        <div className="flex items-center gap-2 text-sm font-semibold">
+        <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">
           <span className="rounded-full bg-accent-soft px-3 py-1 text-accent">Focus: {template.label}</span>
           <Link href="/app/practice/keys" className="text-muted underline hover:text-fg">Change</Link>
         </div>
@@ -71,6 +73,11 @@ export function PracticeClient({ signedIn, showKeyboard, template, initialMode, 
           <label className="flex items-center gap-2">Numbers <Toggle label="Numbers" defaultOn={numbers} onChange={setNumbers} /></label>
         </div>
       )}
+      {mode === "free" && (
+        <p className="text-xs text-muted lg:max-w-xs lg:text-right">
+          <b>No timer:</b> saved to your history and key accuracy, but earns no XP and isn’t compared with your personal bests.
+        </p>
+      )}
     </div>
   );
 
@@ -78,14 +85,14 @@ export function PracticeClient({ signedIn, showKeyboard, template, initialMode, 
     <Run
       key={`${seed}-${mode}-${words}-${punctuation}-${numbers}`}
       mode={mode} words={words} seed={seed} punctuation={punctuation} numbers={numbers} template={template}
-      restart={restart} signedIn={signedIn} showKeyboard={showKeyboard} compact={compact} controls={controls}
+      restart={restart} signedIn={signedIn} showKeyboard={showKeyboard} compact={compact} controls={controls} heading={heading}
     />
   );
 }
 
-function Run({ mode, words, seed, punctuation, numbers, template, restart, controls, signedIn, showKeyboard, compact }: {
+function Run({ mode, words, seed, punctuation, numbers, template, restart, controls, heading, signedIn, showKeyboard, compact }: {
   mode: Mode; words: number | null; seed: number; punctuation: boolean; numbers: boolean; template?: Template; restart: () => void;
-  controls: React.ReactNode; signedIn: boolean; showKeyboard: boolean; compact: boolean;
+  controls: React.ReactNode; heading?: React.ReactNode; signedIn: boolean; showKeyboard: boolean; compact: boolean;
 }) {
   const free = mode === "free";
   const seconds = free ? 0 : mode;
@@ -134,13 +141,18 @@ function Run({ mode, words, seed, punctuation, numbers, template, restart, contr
   const keys = template ? templateInfo(template.id)?.keys ?? [] : [];
 
   return (
-    <div className="space-y-4">
-      {!finished && controls}
+    <div className="space-y-3">
+      {(heading || (!finished && controls)) && (
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
+          <div className="min-w-0">{heading}</div>
+          {!finished && controls}
+        </div>
+      )}
       {finished ? (
         <ResultsCard result={result!} onRetry={restart} save={save} onRetrySave={doSave} signedIn={signedIn} drill={!!template} free={free} compact={compact} />
       ) : (
         <>
-          <Card className="space-y-4 p-6">
+          <Card className="space-y-3 p-4">
             <LiveStats snap={snap} words={free ? { done: doneWords, total: words === null ? null : totalWords } : undefined} />
             <Progress value={progress} label={free ? "Progress through the text" : "Time elapsed"} />
             <TypingSurface
@@ -161,12 +173,7 @@ function Run({ mode, words, seed, punctuation, numbers, template, restart, contr
               </div>
             </div>
           </Card>
-          {free && !compact && (
-            <p className="rounded-token bg-accent-soft px-4 py-3 text-xs">
-              <b>No timer:</b> saved to your history and key accuracy, but it earns no XP and isn’t compared with your personal bests.
-            </p>
-          )}
-          {showKeyboard && !compact && <Card className="hidden md:block"><VirtualKeyboard next={session.nextChar} pressed={pressed} highlight={keys} /></Card>}
+          {showKeyboard && !compact && <Card className="hidden p-3 md:block"><VirtualKeyboard next={session.nextChar} pressed={pressed} highlight={keys} /></Card>}
         </>
       )}
     </div>

@@ -128,7 +128,7 @@ export function TypingSurface({ session, onChar, onBackspace, onFocusChange, onR
         ref={boxRef}
         role="textbox" aria-readonly="true" aria-label="Text to type"
         className={cn(
-          "h-[9.5rem] select-none overflow-hidden rounded-token border-2 px-5 py-1 font-mono text-xl leading-[3rem] tracking-wide sm:text-2xl",
+          "h-[7.75rem] select-none overflow-hidden rounded-token border-2 px-5 py-1 font-mono text-xl leading-[2.5rem] tracking-wide sm:text-2xl",
           focused ? "border-accent" : "border-dashed border-line",
         )}
       >

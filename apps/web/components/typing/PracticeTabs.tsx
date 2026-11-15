@@ -10,7 +10,7 @@ const TABS = [
 /** Switches between the three ways to practise. Shown to signed-in users (the other two need their key history). */
 export function PracticeTabs({ active }: { active: (typeof TABS)[number]["id"] }) {
   return (
-    <nav aria-label="Practice type" className="mb-4 inline-flex gap-0.5 rounded-token bg-surface2 p-1">
+    <nav aria-label="Practice type" className="mb-2 inline-flex gap-0.5 rounded-token bg-surface2 p-1">
       {TABS.map((t) => (
         <Link key={t.id} href={t.href} aria-current={t.id === active ? "page" : undefined}
           className={cn("rounded-[7px] px-4 py-1.5 text-sm font-semibold", t.id === active ? "bg-surface text-fg shadow-sm" : "text-muted hover:text-fg")}>
